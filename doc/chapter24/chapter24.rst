@@ -1309,62 +1309,70 @@ main函数
     * 输出  ：无
     */
     int main(void)
-    {
-        SystemClock_Config();
-        LED_GPIO_Config();
-        LED_BLUE;
-        /* 配置串口1为：115200 8-N-1 */
-        Debug_USART_Config();
-
-        printf("\r\n这是一个16M串行flash(W25Q128)实验 \r\n");
-
-        /* 16M串行flash W25Q128初始化 */
-        SPI_FLASH_Init();
-
-        Delay( 200 );
-
-        /* 获取 SPI Flash ID */
-        FlashID = SPI_FLASH_ReadID();
-
-        /* 检验 SPI Flash ID */
-        if (FlashID == sFLASH_ID)
-        {
-            printf("\r\n检测到SPI FLASH W25Q128 !\r\n");
-
-            /* 擦除将要写入的 SPI FLASH 扇区，FLASH写入前要先擦除 */
-            SPI_FLASH_SectorErase(FLASH_SectorToErase);
-
-            /* 将发送缓冲区的数据写到flash中 */
-            SPI_FLASH_BufferWrite(Tx_Buffer, FLASH_WriteAddress, BufferSize);
-            printf("\r\n写入的数据为：\r\n%s", Tx_Buffer);
-
-            /* 将刚刚写入的数据读出来放到接收缓冲区中 */
-            SPI_FLASH_BufferRead(Rx_Buffer, FLASH_ReadAddress, BufferSize);
-            printf("\r\n读出的数据为：\r\n%s", Rx_Buffer);
-
-            /* 检查写入的数据与读出的数据是否相等 */
-            TransferStatus1 = Buffercmp(Tx_Buffer, Rx_Buffer, BufferSize);
-
-            if ( PASSED == TransferStatus1 )
-            {
-                LED_GREEN;
-                printf("\r\n16M串行flash(W25Q128)测试成功!\n\r");
-            }
-            else
-            {
-                LED_RED;
-                printf("\r\n16M串行flash(W25Q128)测试失败!\n\r");
-            }
-        }// if (FlashID == sFLASH_ID)
-        else
-        {
-            LED_RED;
-            printf("\r\n获取不到 W25Q128 ID!\n\r");
-        }
-
-        SPI_Flash_PowerDown();
-        while (1);
+    {   
+      /* 设定系统时钟为180MHz */
+      SystemClock_Config();
+    	
+    	LED_GPIO_Config();
+    	LED1_ON;
+    	
+    	/* 配置串口1为：115200 8-N-1 */
+    	DEBUG_USART_Config();
+      
+    	printf("\r\n这是一个16M串行flash(W25Q128)实验(QSPI驱动) \r\n");
+    	
+      /* 16M串行flash W25Q128初始化 */
+    	SPI_FLASH_Init();
+    		/* 获取 Flash Device ID */
+    	DeviceID = SPI_FLASH_ReadDeviceID();
+    	
+    	Delay( 200 );
+    	
+    	/* 获取 SPI Flash ID */
+    	FlashID = SPI_FLASH_ReadID();
+    	
+    	printf("\r\nFlashID is 0x%X,  Manufacturer Device ID is 0x%X\r\n", FlashID, DeviceID);
+    	
+    	/* 检验 SPI Flash ID */
+    	if (FlashID == sFLASH_ID) 
+    	{	
+    		printf("\r\n检测到SPI FLASH W25Q128 !\r\n");
+    		
+    		/* 擦除将要写入的 SPI FLASH 扇区，FLASH写入前要先擦除 */
+    		SPI_FLASH_SectorErase(FLASH_SectorToErase);	 	 
+    		
+    		/* 将发送缓冲区的数据写到flash中 */
+    		SPI_FLASH_BufferWrite(Tx_Buffer, FLASH_WriteAddress, BufferSize);
+    		printf("\r\n写入的数据为：\r\n%s", Tx_Buffer);
+    		
+    		/* 将刚刚写入的数据读出来放到接收缓冲区中 */
+    		SPI_FLASH_BufferRead(Rx_Buffer, FLASH_ReadAddress, BufferSize);
+    		printf("\r\n读出的数据为：\r\n%s", Rx_Buffer);
+    		
+    		/* 检查写入的数据与读出的数据是否相等 */
+    		TransferStatus1 = Buffercmp(Tx_Buffer, Rx_Buffer, BufferSize);
+    		
+    		if( PASSED == TransferStatus1 )
+    		{    
+    			LED_ALLON;
+    			printf("\r\n16M串行flash(W25Q128)测试成功!\n\r");
+    		}
+    		else
+    		{        
+    			LED2_ON;
+    			printf("\r\n16M串行flash(W25Q128)测试失败!\n\r");
+    		}
+    	}// if (FlashID == sFLASH_ID)
+    	else
+    	{    
+    		LED2_ON;
+    		printf("\r\n获取不到 W25Q128 ID!\n\r");
+    	}
+    	
+    	SPI_Flash_PowerDown();  
+    	while(1);  
     }
+
 
 函数中初始化了LED、串口、SPI外设，然后读取FLASH芯片的ID进行校验，若ID校验通过则向FLASH的特定地址写入测试数据，然后再从该地址读取数据，测试读写是否正常。
 

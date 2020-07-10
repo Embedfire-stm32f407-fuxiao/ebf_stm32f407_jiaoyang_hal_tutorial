@@ -11,7 +11,7 @@ GPIO简介
 
 GPIO是通用输入输出端口的简称，简单来说就是STM32可控制的引脚，STM32芯片的GPIO引脚与外部设备连接起来，
 从而实现与外部通讯、控制以及数据采集的功能。STM32芯片的GPIO被分成很多组，每组有16个引脚，
-如型号为STM32F4ZGT6型号的芯片有GPIOA、GPIOB、GPIOC至GPIOG共7组GPIO，芯片一共144个引脚，其中GPIO就占了一大部分，
+如型号为STM32F407IGT6型号的芯片有GPIOA、GPIOB、GPIOC至GPIOI共9组GPIO，芯片一共176个引脚，其中GPIO就占了一大部分，
 所有的GPIO引脚都有基本的输入输出功能。
 
 最基本的输出功能是由STM32控制引脚输出高、低电平，实现开关控制，如把GPIO引脚接入到LED灯，那就可以控制LED灯的亮灭，引脚接入到继电器或三极管，那就可以通过继电器或三极管控制外部大功率电路的通断。
@@ -133,7 +133,7 @@ GPIO工作模式
 输出模式(推挽/开漏，上拉/下拉)
 ''''''''''''''''''''''''''''''''''''''
 
-在输出模式中，输出使能，推挽模式时双MOS管以方式工作，输出数据寄存器GPIOx_ODR可控制I/O输出高低电平。开漏模式时，只有N-MOS管工作，输出数据寄存器可控制I/O输出高阻态或低电平。输出速度可配置，有2MHz\25MHz\50MHz\100MHz的选项。此处的输出速度即I/O支持的高低电平状态最高切换频率，支持的频率越高，功耗越大，如果功耗要求不严格，把速度设置成最大即可。
+在输出模式中，输出使能，推挽模式时双MOS管以方式工作，输出数据寄存器GPIOx_ODR可控制I/O输出高低电平。开漏模式时，只有N-MOS管工作，输出数据寄存器可控制I/O输出高阻态或低电平。输出速度可配置，有2MHz\\25MHz\\50MHz\\100MHz的选项。此处的输出速度即I/O支持的高低电平状态最高切换频率，支持的频率越高，功耗越大，如果功耗要求不严格，把速度设置成最大即可。
 
 此时施密特触发器是打开的，即输入可用，通过输入数据寄存器GPIOx_IDR可读取I/O的实际状态。
 
@@ -178,16 +178,16 @@ GPIO工作模式
 硬件连接
 ^^^^^^^^
 
-在本教程中STM32芯片的PF6、PF7和PF8引脚分别与一个RGB灯的R灯（红灯）、G灯（蓝灯）和B灯（绿灯）连接，具体见
-图7_8_，RGB灯里面的三个小灯都可以单独控制，如果有两个或者三个灯同时亮的话就会混合成其它的颜色。
+在本教程中STM32芯片的PA15、PE2、PG15和PB8引脚分别与四个LED灯连接，具体见
+图7_8_。
 
 .. image:: media/image8.png
    :align: center
    :alt: 图 7‑8 LED灯电路连接图
    :name: 图7_8
 
-图中从3个LED灯的阳极引出连接到3.3V电源，阴极各经过1个限流电阻电阻引入至STM32的3个GPIO引脚PF6、PF7和PF8中，
-所以我们只要控制这三个引脚输出高低电平，即可控制其所连接LED灯的亮灭。如果您的实验板STM32连接到LED灯的引脚或极性不一样，
+图中从四个LED灯的阳极引出连接到3.3V电源，阴极各经过1个限流电阻电阻引入至STM32的4个GPIO引脚PA15、PE2、PG15和PB8中，
+所以我们只要控制这四个引脚输出高低电平，即可控制其所连接LED灯的亮灭。如果您的实验板STM32连接到LED灯的引脚或极性不一样，
 只需要修改程序到对应的GPIO引脚即可，工作原理都是一样的。
 
 我们的目标是把GPIO的引脚设置成推挽输出模式并且默认下拉，输出低电平，这样就能让LED灯亮起来了。
@@ -294,28 +294,32 @@ stm32f4xx.h文件
    :name: 代码清单7_2
 
    /*片上外设基地址  */
-   #define PERIPH_BASE           ((unsigned int)0x40000000)
+   #define PERIPH_BASE           ((unsigned int)0x40000000)                          
+   
    /*总线基地址 */
-   #define AHB1PERIPH_BASE       (PERIPH_BASE + 0x00020000)
+   #define AHB1PERIPH_BASE       (PERIPH_BASE + 0x00020000)	
+   
    /*GPIO外设基地址*/
-   #define GPIOF_BASE            (AHB1PERIPH_BASE + 0x1400)
-
-   /* GPIOH寄存器地址,强制转换成指针 */
-   #define GPIOH_MODER             *(unsigned int*)(GPIOH_BASE+0x00)
-   #define GPIOH_OTYPER            *(unsigned int*)(GPIOH_BASE+0x04)
-   #define GPIOH_OSPEEDR           *(unsigned int*)(GPIOH_BASE+0x08)
-   #define GPIOH_PUPDR             *(unsigned int*)(GPIOH_BASE+0x0C)
-   #define GPIOH_IDR               *(unsigned int*)(GPIOH_BASE+0x10)
-   #define GPIOH_ODR               *(unsigned int*)(GPIOH_BASE+0x14)
-   #define GPIOH_BSRR              *(unsigned int*)(GPIOH_BASE+0x18)
-   #define GPIOH_LCKR              *(unsigned int*)(GPIOH_BASE+0x1C)
-   #define GPIOH_AFRL              *(unsigned int*)(GPIOH_BASE+0x20)
-   #define GPIOH_AFRH              *(unsigned int*)(GPIOH_BASE+0x24)
-
+   #define GPIOA_BASE            (AHB1PERIPH_BASE + 0x0000)
+   
+   /* GPIOA寄存器地址,强制转换成指针 */
+   #define GPIOA_MODER				*(unsigned int*)(GPIOA_BASE+0x00)
+   #define GPIOA_OTYPER			*(unsigned int*)(GPIOA_BASE+0x04)
+   #define GPIOA_OSPEEDR			*(unsigned int*)(GPIOA_BASE+0x08)
+   #define GPIOA_PUPDR				*(unsigned int*)(GPIOA_BASE+0x0C)
+   #define GPIOA_IDR					*(unsigned int*)(GPIOA_BASE+0x10)
+   #define GPIOA_ODR					*(unsigned int*)(GPIOA_BASE+0x14)
+   #define GPIOA_BSRR					*(unsigned int*)(GPIOA_BASE+0x18)
+   #define GPIOA_LCKR					*(unsigned int*)(GPIOA_BASE+0x1C)
+   #define GPIOA_AFRL					*(unsigned int*)(GPIOA_BASE+0x20)
+   #define GPIOA_AFRH					*(unsigned int*)(GPIOA_BASE+0x24)
+   
    /*RCC外设基地址*/
    #define RCC_BASE              (AHB1PERIPH_BASE + 0x3800)
+   
    /*RCC的AHB1时钟使能寄存器地址,强制转换成指针*/
-   #define RCC_AHB1ENR            *(unsigned int*)(RCC_BASE+0x30)
+   #define RCC_AHB1ENR				*(unsigned int*)(RCC_BASE+0x30)
+
 
 GPIO外设的地址跟上一章讲解的相同，不过此处把寄存器的地址值都直接强制转换成了指针，方便使用。
 代码的最后两段是RCC外设寄存器的地址定义，RCC外设是用来设置时钟的，以后我们会详细分析，本实验中只要了解到使用GPIO外设必须开启它的时钟即可。
@@ -360,17 +364,17 @@ startup_stm32f40xx.o)”
 GPIO模式
 ''''''''
 
-首先我们把连接到RGB红灯的PF6引脚配置成输出模式，即配置GPIO的MODER寄存器，具体见 图7_9_。
+首先我们把连接到LED-D11的PA15引脚配置成输出模式，即配置GPIO的MODER寄存器，具体见 图7_9_。
 MODER中包含0-15号引脚，每个引脚占用2个寄存器位。这两个寄存器位设置成“01”时即为GPIO的输出模式，具体见 代码清单7_4_。
 
 .. code-block:: c
    :caption: 代码清单 7‑4 配置输出模式
    :name: 代码清单7_4
 
-   /*GPIOF MODER6清空*/
-   GPIOF_MODER  &= ~( 0x03<< (2*6));
-   /*PF6 MODER6 = 01b 输出模式*/
-   GPIOH_MODER |= (1<<2*6);
+    /*GPIOA MODER15清空*/
+    GPIOA_MODER  &= ~( (unsigned int)0x3<< (2*15));	
+    /*PA15 MODER15 = 01b 输出模式*/
+    GPIOA_MODER |= ((unsigned int)1<<2*15);
 
 .. image:: media/image9.png
    :align: center
@@ -379,24 +383,24 @@ MODER中包含0-15号引脚，每个引脚占用2个寄存器位。这两个寄�
 
 图 7-7 MODER寄存器说明(摘自《STM32F4xx参考手册》)
 
-在代码中，我们先把GPIOH MODER寄存器的MODER6对应位清0，然后再向它赋值“01”，从而使GPIOF6引脚设置成输出模式。
+在代码中，我们先把GPIOH MODER寄存器的MODER15对应位清0，然后再向它赋值“01”，从而使GPIOF6引脚设置成输出模式。
 
 代码中使用了“&=~”、“\|=”这种位操作方法是为了避免影响到寄存器中的其它位，
 因为寄存器不能按位读写，假如我们直接给MODER寄存器赋值：
 
 .. code-block:: c
 
-   GPIOF_MODER = 0x0004 0000;
+   GPIOF_MODER = 0x4000 0000;
 
-这时MODER6的两个位被设置成“01”输出模式，但其它GPIO引脚就有意见了，因为其它引脚的MODER位都已被设置成00的输入模式。
+这时MODER15的两个位被设置成“01”输出模式，但其它GPIO引脚就有意见了，因为其它引脚的MODER位都已被设置成00的输入模式。
 所以为了不影响寄存器的其它位，必须使用“&=~”（清0）、“\|=”（置位）这种位操作方法来实现对寄存器的写操作。
 
 输出类型
 ''''''''
 
 GPIO输出有推挽和开漏两种类型，我们了解到开漏类型不能直接输出高电平，要输出高电平还要在芯片外部接上拉电阻，
-不符合我们的硬件设计，所以我们直接使用推挽模式。配置OTYPER寄存中的OTYPER6寄存器位，具体见 图7_12_。
-该位设置为0时PF6引脚即为推挽模式，具体见 代码清单7_8_。
+不符合我们的硬件设计，所以我们直接使用推挽模式。配置OTYPER寄存中的OTYPER15寄存器位，具体见 图7_12_。
+该位设置为0时PA15引脚即为推挽模式，具体见 代码清单7_8_。
 
 .. image:: media/image12.png
    :align: center
@@ -407,16 +411,16 @@ GPIO输出有推挽和开漏两种类型，我们了解到开漏类型不能直�
    :caption: 代码清单 7-8 设置为推挽模式
    :name: 代码清单7_8
 
-   /*GPIOF OTYPER6清空*/
-   GPIOH_OTYPER &= ~(1<<1*6);
-   /*PF6 OTYPER6 = 0b 推挽模式*/
-   GPIOH_OTYPER |= (0<<1*6);
+    /*GPIOA OTYPER15清空*/
+    GPIOA_OTYPER &= ~((unsigned int)1<<1*15);
+    /*PA15 OTYPER15 = 0b 推挽模式*/
+    GPIOA_OTYPER |= ((unsigned int)0<<1*15);
 
 输出速度
 ''''''''
 
 GPIO引脚的输出速度是引脚支持高低电平切换的最高频率，本实验可以随便设置。
-此处我们配置OSPEEDR寄存器中的寄存器位OSPEEDR6即可控制PF6的输出速度，
+此处我们配置OSPEEDR寄存器中的寄存器位OSPEEDR15即可控制PA15的输出速度，
 寄存器描述见 图7_13_，具体代码见 代码清单7_9_。
 
 .. image:: media/image13.png
@@ -428,10 +432,10 @@ GPIO引脚的输出速度是引脚支持高低电平切换的最高频率，本�
    :caption: 代码清单 7-9 设置为推挽模式
    :name: 代码清单7_9
 
-   /*GPIOF OSPEEDR6清空*/
-   GPIOH_OSPEEDR &= ~(0x03<<2*6);
-   /*PF6 OSPEEDR6 = 0b 速率2MHz*/
-   GPIOH_OSPEEDR |= (0<<2*6);
+    /*GPIOA OSPEEDR15清空*/
+    GPIOA_OSPEEDR &= ~((unsigned int)0x3<<2*15);
+    /*PA15 OSPEEDR15 = 0b 速率2MHz*/
+    GPIOA_OSPEEDR |= ((unsigned int)0<<2*15);
 
 上/下拉模式
 ''''''''''''''''
@@ -439,7 +443,7 @@ GPIO引脚的输出速度是引脚支持高低电平切换的最高频率，本�
 当GPIO引脚用于输入时，引脚的上/下拉模式可以控制引脚的默认状态。但现在我们的GPIO引脚用于输出，
 引脚受ODR寄存器（数据输出寄存器）影响，ODR寄存器对应引脚位初始初始化后默认值为0，引脚输出低电平，
 所以这时我们配置上/下拉模式都不会影响引脚电平状态。但因此处上拉能小幅提高电流输出能力，我们配置它为上拉模式，
-即配置PUPDR寄存器的PUPDR6位，寄存器描述具体见 图7_14_，设置该位为二进制值“01”，具体代码见 代码清单7_10_。
+即配置PUPDR寄存器的PUPDR15位，寄存器描述具体见 图7_14_，设置该位为二进制值“01”，具体代码见 代码清单7_10_。
 
 .. image:: media/image14.png
    :align: center
@@ -450,16 +454,16 @@ GPIO引脚的输出速度是引脚支持高低电平切换的最高频率，本�
    :caption: 代码清单 7-9 设置为下拉模式
    :name: 代码清单7_10
 
-   /*GPIOF PUPDR6清空*/
-   GPIOF_PUPDR &= ~(0x03<<2*6);
-   /*PF6 PUPDR6 = 01b 上拉模式*/
-   GPIOF_PUPDR |= (1<<2*6);
+    /*GPIOA PUPDR15清空*/
+    GPIOA_PUPDR &= ~((unsigned int)0x3<<2*15);
+    /*PA15 PUPDR15 = 01b 上拉模式*/
+    GPIOA_PUPDR |= ((unsigned int)1<<2*15);
 
 控制引脚输出电平
 ''''''''''''''''
 
 在输出模式时，对BSRR寄存器和ODR寄存器写入参数即可控制引脚的电平状态。简单起见，此处我们使用BSRR寄存器控制，
-对相应的BR6位设置为1时PF6即为低电平，点亮LED灯，对它的BS6位设置为1时PF6即为高电平，
+对相应的BR15位设置为1时PA15即为低电平，点亮LED灯，对它的BS15位设置为1时PA15即为高电平，
 关闭LED灯。寄存器BSRR的具体描述见 图7_10_，具体代码见 代码清单7_5_。
 
 .. image:: media/image10.png
@@ -471,11 +475,11 @@ GPIO引脚的输出速度是引脚支持高低电平切换的最高频率，本�
    :caption: 代码清单 7‑5 控制引脚输出电平
    :name: 代码清单7_5
 
-   /*PF6 BSRR寄存器的 BR6置1，使引脚输出低电平*/
-   GPIOF_BSRR |= (1<<16<<6);
-
-   /*PF6 BSRR寄存器的 BS6置1，使引脚输出高电平*/
-   GPIOF_BSRR |= (1<<6);
+    /*PA15 BSRR寄存器的 BR15置1，使引脚输出低电平*/
+    GPIOA_BSRR |= ((unsigned int)1<<16<<15);
+    
+    /*PA15 BSRR寄存器的 BS15置1，使引脚输出高电平*/
+    GPIOA_BSRR |= ((unsigned int)1<<15);
 
 开启外设时钟
 ''''''''''''
@@ -489,7 +493,7 @@ RCC 在《 STM32F4xx中文参考手册》的第六章有详细的讲解。
 
 所有的 GPIO都挂载到 AHB1 总线上，所以它们的时钟由AHB1外设时钟使能寄存器(RCC_AHB1ENR)来控制，
 有关该寄存器的详细描述请参考《 STM32F4xx中文参考手册》的RCC章节的寄存器描述部分。
-其中 GPIOF 端口的时钟由该寄存器的位 5写 1 使能来开启。
+其中 GPIOA 端口的时钟由该寄存器的位 0写 1 使能来开启。
 有关STM32的时钟系统我们在往后的RCC章节会详细的讲解，此处我们只需知道在访问GPIO这个外设的寄存器之前，
 要先开启它的时钟。具体代码见 代码清单7_6_。
 
@@ -499,7 +503,7 @@ RCC 在《 STM32F4xx中文参考手册》的第六章有详细的讲解。
 
     // 开启 GPIOB 端口 时钟
 
-    RCC_AHB1ENR |= (1<<5);
+    RCC_AHB1ENR |= ((unsigned int)1<<0);	
 
 水到渠成
 ''''''''
@@ -519,41 +523,42 @@ LED了。现在我们完整组织下用 STM32 控制一个 LED 的代码，见 �
     /**
       *   主函数
       */
-     int main(void)
-     {
-         /*开启 GPIOF 时钟，使用外设时都要先开启它的时钟*/
-         RCC_AHB1ENR |= (1<<5);
-
-         /* LED 端口初始化 */
-
-         /*GPIOF MODER6清空*/
-         GPIOF_MODER  &= ~( 0x03<< (2*6));
-         /*PF6 MODER6 = 01b 输出模式*/
-         GPIOF_MODER |= (1<<2*6);
-
-         /*GPIOF OTYPER6清空*/
-         GPIOF_OTYPER &= ~(1<<1*6);
-         /*PF6 OTYPER6 = 0b 推挽模式*/
-         GPIOF_OTYPER |= (0<<1*6);
-
-         /*GPIOF OSPEEDR6清空*/
-         GPIOF_OSPEEDR &= ~(0x03<<2*6);
-         /*PF6 OSPEEDR6 = 0b 速率2MHz*/
-         GPIOF_OSPEEDR |= (0<<2*6);
-
-         /*GPIOF PUPDR6清空*/
-         GPIOF_PUPDR &= ~(0x03<<2*6);
-         /*PF6 PUPDR6 = 01b 上拉模式*/
-         GPIOF_PUPDR |= (1<<2*6);
-
-         /*PF6 BSRR寄存器的 BR6置1，使引脚输出低电平*/
-         GPIOF_BSRR |= (1<<16<<6);
-
-         /*PF6 BSRR寄存器的 BS6置1，使引脚输出高电平*/
-         //GPIOF_BSRR |= (1<<6);
-
-         while (1);
-     }
+    int main(void)
+    {	
+    	/*开启 GPIOA 时钟，使用外设时都要先开启它的时钟*/
+    	RCC_AHB1ENR |= ((unsigned int)1<<0);	
+    	
+    	/* LED 端口初始化 */
+    	
+    	/*GPIOA MODER15清空*/
+    	GPIOA_MODER  &= ~( (unsigned int)0x3<< (2*15));	
+    	/*PA15 MODER15 = 01b 输出模式*/
+    	GPIOA_MODER |= ((unsigned int)1<<2*15);
+    	
+    	/*GPIOA OTYPER15清空*/
+    	GPIOA_OTYPER &= ~((unsigned int)1<<1*15);
+    	/*PA15 OTYPER15 = 0b 推挽模式*/
+    	GPIOA_OTYPER |= ((unsigned int)0<<1*15);
+    	
+    	/*GPIOA OSPEEDR15清空*/
+    	GPIOA_OSPEEDR &= ~((unsigned int)0x3<<2*15);
+    	/*PA15 OSPEEDR15 = 0b 速率2MHz*/
+    	GPIOA_OSPEEDR |= ((unsigned int)0<<2*15);
+    	
+    	/*GPIOA PUPDR15清空*/
+    	GPIOA_PUPDR &= ~((unsigned int)0x3<<2*15);
+    	/*PA15 PUPDR15 = 01b 上拉模式*/
+    	GPIOA_PUPDR |= ((unsigned int)1<<2*15);
+    	
+    	/*PA15 BSRR寄存器的 BR15置1，使引脚输出低电平*/
+    	GPIOA_BSRR |= ((unsigned int)1<<16<<15);
+    	
+    	/*PA15 BSRR寄存器的 BS15置1，使引脚输出高电平*/
+    //	GPIOA_BSRR |= ((unsigned int)1<<15);
+    
+    	while(1);
+    
+    }
 
      // 函数为空，目的是为了骗过编译器不报错
      void SystemInit(void)
@@ -561,7 +566,7 @@ LED了。现在我们完整组织下用 STM32 控制一个 LED 的代码，见 �
      }
 
 
-在本章节中，要求完全理解stm32f10x.h文件及main文件的内容(RCC相关的可以除外)。
+在本章节中，要求完全理解stm324xx.h文件及main文件的内容(RCC相关的可以除外)。
 
 下载验证
 ^^^^^^^^

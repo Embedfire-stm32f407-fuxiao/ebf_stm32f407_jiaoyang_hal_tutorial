@@ -235,17 +235,17 @@ WWDG中断优先级函数
 
         //检查窗口看门狗复位标志位
         if (__HAL_RCC_GET_FLAG(RCC_FLAG_WWDGRST) != RESET) {
-            // 看门狗复位启动，红色灯亮
-            LED_RED;
+            // 看门狗复位启动，2灯亮
+            LED2_ON;
 
             //清除复位标志位
             __HAL_RCC_CLEAR_RESET_FLAGS();
         } else {
-            // 正常启动，蓝色灯亮
-            LED_BLUE;
+            // 正常启动，1灯亮
+            LED1_ON;
         }
         HAL_Delay(500);
-        LED_RGBOFF;
+        LED_ALLOFF;
         HAL_Delay(500);
 
         // WWDG配置
@@ -269,8 +269,8 @@ WWDG中断优先级函数
             if ( wwdg_tr == wwdg_wr) {
                 // 喂狗，重新设置计数器的值为最大0X7F
                 WWDG_Feed();
-                // 正常喂狗，绿色灯闪烁
-                LED2_TOGGLE;
+                // 正常喂狗，全灯闪烁
+                LED_ALLTOGGLE;
             }
         }
     }

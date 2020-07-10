@@ -497,27 +497,26 @@ I2C硬件相关宏定义
    :caption: 代码清单 23‑2 I2C硬件配置相关的宏
    :name: 代码清单23_2
 
-   /* 这个地址只要与STM32外挂的I2C器件地址不一样即可 */
-   #define I2C_OWN_ADDRESS7      0X0A
+    /* 这个地址只要与STM32外挂的I2C器件地址不一样即可 */
+    #define I2C_OWN_ADDRESS7      0X0A   
+    
+    #define I2Cx                             I2C2
+    #define I2Cx_CLK_ENABLE()                __HAL_RCC_I2C2_CLK_ENABLE()
+    #define I2Cx_SDA_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOH_CLK_ENABLE()
+    #define I2Cx_SCL_GPIO_CLK_ENABLE()       __HAL_RCC_GPIOH_CLK_ENABLE() 
+    
+    #define I2Cx_FORCE_RESET()               __HAL_RCC_I2C2_FORCE_RESET()
+    #define I2Cx_RELEASE_RESET()             __HAL_RCC_I2C2_RELEASE_RESET()
+    
+    /* Definition for I2Cx Pins */
+    #define I2Cx_SCL_PIN                    GPIO_PIN_4
+    #define I2Cx_SCL_GPIO_PORT              GPIOH
+    #define I2Cx_SCL_AF                     GPIO_AF4_I2C2
+    #define I2Cx_SDA_PIN                    GPIO_PIN_5
+    #define I2Cx_SDA_GPIO_PORT              GPIOH
+    #define I2Cx_SDA_AF                     GPIO_AF4_I2C2
 
-   #define I2Cx                       I2C1
-   #define I2Cx_CLK_ENABLE()          __HAL_RCC_I2C1_CLK_ENABLE()
-   #define I2Cx_SDA_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-   #define I2Cx_SCL_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
-
-   #define I2Cx_FORCE_RESET()         __HAL_RCC_I2C1_FORCE_RESET()
-   #define I2Cx_RELEASE_RESET()       __HAL_RCC_I2C1_RELEASE_RESET()
-
-   /* Definition for I2Cx Pins */
-   #define I2Cx_SCL_PIN                    GPIO_PIN_8
-   #define I2Cx_SCL_GPIO_PORT              GPIOB
-   #define I2Cx_SCL_AF                     GPIO_AF4_I2C1
-   #define I2Cx_SDA_PIN                    GPIO_PIN_9
-   #define I2Cx_SDA_GPIO_PORT              GPIOB
-   #define I2Cx_SDA_AF                     GPIO_AF4_I2C1
-
-以上代码根据硬件连接，把与EEPROM通讯使用的I2C号
-、引脚号都以宏封装起来，并且定义了自身的I2C地址及通讯速率，以便配置模式的时候使用。
+以上代码根据硬件连接，把与EEPROM通讯使用的I2C号、引脚号都以宏封装起来，并且定义了自身的I2C地址及通讯速率，以便配置模式的时候使用。
 
 初始化I2C的 GPIO
 ====================
@@ -975,32 +974,32 @@ main函数
     */
     int main(void)
     {
-        /* 配置系统时钟为168 MHz */
-        SystemClock_Config();
-
-        /* 初始化RGB彩灯 */
-        LED_GPIO_Config();
-
-        LED_BLUE;
-        /*初始化USART1*/
-        UARTx_Config();
-
-        printf("\r\n 欢迎使用野火  STM32 F407 开发板。\r\n");
-
-        printf("\r\n 这是一个I2C外设(AT24C02)读写测试例程 \r\n");
-
-        /* I2C 外设初(AT24C02)始化 */
-        I2C_EE_Init();
-
-        if (I2C_Test() ==1) {
-            LED_GREEN;
-        } else {
-            LED_RED;
-        }
-
-        while (1) {
-
-        }
+      HAL_Init();        
+      /* 配置系统时钟为168 MHz */ 
+      SystemClock_Config();
+    	/* 初始化RGB彩灯 */ 
+      LED_GPIO_Config(); 
+      /*初始化USART 配置模式为 115200 8-N-1，中断接收*/
+      DEBUG_USART_Config();
+      
+      printf("\r\n 欢迎使用野火  STM32 F407 开发板。\r\n");		 
+      printf("\r\n 这是一个I2C外设(AT24C02)读写测试例程 \r\n");
+      
+    	/* I2C 外设初(AT24C02)始化 */
+      I2C_EE_Init();
+    	
+      if(I2C_Test() ==1)
+      {
+          LED_ALLON;
+      }
+      else
+      {
+          LED2_ON;
+      }
+    
+      while (1)
+     {        
+     }  
     }
 
 下载验证

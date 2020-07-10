@@ -1,9 +1,9 @@
-.. [野火]STM32库开发实战指南——基于野火霸天虎开发板 documentation master file, created by
+.. [野火]STM32库开发实战指南——基于野火骄阳开发板 documentation master file, created by
    sphinx-quickstart on Wed Nov 20 09:46:40 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-[野火]STM32 HAL库开发实战指南——基于野火F407霸天虎开发板
+[野火]STM32 HAL库开发实战指南——基于野火F407骄阳开发板
 ========================================================
 
 .. toctree::
@@ -16,13 +16,14 @@
 
 .. toctree::
    :maxdepth: 1
-   :caption: [野火]STM32 HAL库开发实战指南-F407霸天虎
+   :caption: [野火]STM32 HAL库开发实战指南-F407骄阳
    :numbered:
 
    doc/chapter1/chapter1
    doc/chapter2/chapter2
    doc/chapter3/chapter3
    doc/chapter4/chapter4
+   doc/chapter4_1/chapter4_1
    doc/chapter5/chapter5
    doc/chapter6/chapter6
    doc/chapter7/chapter7
@@ -44,19 +45,14 @@
    doc/chapter23/chapter23
    doc/chapter24/chapter24
    doc/chapter25/chapter25
-   doc/chapter26_0/chapter26_0
    doc/chapter26/chapter26
    doc/chapter27/chapter27
    doc/chapter28/chapter28
    doc/chapter29/chapter29
    doc/chapter30/chapter30
    doc/chapter31/chapter31
-   doc/chapter32/chapter32
    doc/chapter33/chapter33
    doc/chapter34/chapter34
-   doc/chapter35/chapter35
-   doc/chapter36/chapter36
-   doc/chapter36_0/chapter36_0
    doc/chapter36_1/chapter36_1
    doc/chapter37_0/chapter37_0
    doc/chapter38_0/chapter38_0

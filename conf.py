@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = '[野火]STM32 HAL库开发实战指南——基于野火霸天虎开发板'
+project = '[野火]STM32 HAL库开发实战指南——基于野火骄阳开发板'
 copyright = '2019, embedfire-野火 www.embedfire.com'
 author = 'embedfire-野火 www.embedfire.com'
 

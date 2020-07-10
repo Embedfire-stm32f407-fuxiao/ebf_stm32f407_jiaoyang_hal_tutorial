@@ -345,45 +345,31 @@ TimingDelay的值等于延时函数中传进去的nTime的值，比如nTime=1000
 .. code-block:: c
 
     int main(void)
-
     {
-
-        /* 系统时钟初始化成72MHz */
-
+        /* 系统时钟初始化成168 MHz */
         SystemClock_Config();
-
-        /* LED 端口初始化 */
-
-        LED_GPIO_Config();
-
-        /* 配置SysTick 为10us中断一次,
-
-        时间到后触发定时中断，
-
-        *进入stm32f7xx_it.
-
-        c文件的SysTick_Handler处理，通过数中断次数计时
-
-        */
-
-        SysTick_Init();
-
-        while (1) {
-
-            LED_RED;
-
-            Delay_us(100000); // 10000 * 10us = 1000ms
-
-            LED_GREEN;
-
-            Delay_us(100000); // 10000 * 10us = 1000ms
-
-            LED_BLUE;
-
-            Delay_us(100000); // 10000 * 10us = 1000ms
-
-        }
-
+    	/* LED 端口初始化 */
+    	LED_GPIO_Config();
+      /* 配置SysTick 为10us中断一次,时间到后触发定时中断，
+    	*进入stm32f4xx_it.c文件的SysTick_Handler处理，通过数中断次数计时
+    	*/
+    	SysTick_Init();
+      
+    	while(1)
+    	{
+    
+    	  LED1_TOGGLE; 
+    	  Delay_us(100000);    	// 10000 * 10us = 1000ms
+    	  
+    	  LED2_TOGGLE;
+    	  Delay_us(100000);		// 10000 * 10us = 1000ms
+    	
+    	  LED3_TOGGLE;
+    	  Delay_us(100000);		// 10000 * 10us = 1000ms
+    
+    	  LED4_TOGGLE;
+    	  Delay_us(100000);		// 10000 * 10us = 1000ms
+    	}  
     }
 
 主函数中初始化了LED和SysTick，然后在一个while循环中以1s的频率让LED闪烁。

@@ -7,6 +7,8 @@ RS-485通讯实验
 
 关于实验板中使用的MAX485收发器资料可查阅《MAX485》规格书了解。
 
+本章内容图文配套为F407霸天虎开发板，但是教程内容通用，对于F407骄阳电机驱动控制板的硬件连接部分和代码略有不同，已做修改。
+
 RS-485通讯协议简介
 ~~~~~~~~~~~~~~~~~~
 
@@ -101,30 +103,29 @@ USART外设的TXD引脚使用杜邦线连接到RXD引脚可进行自收发测试
    :name: 代码清单40_0_1
 
     /*USART号、时钟、波特率*/
-    #define _485_USART                             USART2
-    #define _485_USART_CLK_ENABLE()                __USART2_CLK_ENABLE();
+    #define _485_USART                             UART4
+    #define _485_USART_CLK_ENABLE()                __UART4_CLK_ENABLE();
     #define _485_USART_BAUDRATE                    115200
-
-    #define RCC_PERIPHCLK_485_USART                RCC_PERIPHCLK_USART2
-    #define RCC_485_USARTCLKSOURCE_SYSCLK
-    RCC_USART2CLKSOURCE_SYSCLK
+    
+    #define RCC_PERIPHCLK_485_USART                RCC_PERIPHCLK_UART4
+    #define RCC_485_USARTCLKSOURCE_SYSCLK          RCC_USART4CLKSOURCE_SYSCLK
     /*RX引脚*/
-    #define _485_USART_RX_GPIO_PORT                GPIOA
-    #define _485_USART_RX_GPIO_CLK_ENABLE()        __GPIOA_CLK_ENABLE()
-    #define _485_USART_RX_PIN                      GPIO_PIN_3
-    #define _485_USART_RX_AF                       GPIO_AF7_USART2
+    #define _485_USART_RX_GPIO_PORT                GPIOC
+    #define _485_USART_RX_GPIO_CLK_ENABLE()        __GPIOC_CLK_ENABLE()
+    #define _485_USART_RX_PIN                      GPIO_PIN_11
+    #define _485_USART_RX_AF                       GPIO_AF8_UART4
     /*TX引脚*/
-    #define _485_USART_TX_GPIO_PORT                GPIOA
-    #define _485_USART_TX_GPIO_CLK_ENABLE()        __GPIOA_CLK_ENABLE()
-    #define _485_USART_TX_PIN                      GPIO_PIN_2
-    #define _485_USART_TX_AF                       GPIO_AF7_USART2
+    #define _485_USART_TX_GPIO_PORT                GPIOC
+    #define _485_USART_TX_GPIO_CLK_ENABLE()        __GPIOC_CLK_ENABLE()
+    #define _485_USART_TX_PIN                      GPIO_PIN_10
+    #define _485_USART_TX_AF                       GPIO_AF8_UART4
     /*485收发控制引脚*/
-    #define _485_RE_GPIO_PORT            GPIOC
-    #define _485_RE_GPIO_CLK_ENABLE()              __GPIOC_CLK_ENABLE()
-    #define _485_RE_PIN                GPIO_PIN_0
+    #define _485_RE_GPIO_PORT					   GPIOH
+    #define _485_RE_GPIO_CLK_ENABLE()              __GPIOH_CLK_ENABLE()
+    #define _485_RE_PIN							   GPIO_PIN_9
     /*中断相关*/
-    #define _485_INT_IRQ                       USART2_IRQn
-    #define bsp_485_IRQHandler                     USART2_IRQHandler
+    #define _485_INT_IRQ                 		   UART4_IRQn
+    #define bsp_485_IRQHandler                     UART4_IRQHandler
 
 以上代码根据硬件连接，把与485通讯使用的USART外设号
 、引脚号、引脚源以及复用功能映射都以宏封装起来，并且定义了接收中断的中断向量和中断服务函数，我们通过中断来获知接收数据。
@@ -164,8 +165,8 @@ USART外设的TXD引脚使用杜邦线连接到RXD引脚可进行自收发测试
         _485_USART_CLK_ENABLE();
 
         /**USART2 GPIO Configuration
-        PD5    ------> USART2_TX
-        PD6    ------> USART2_RX
+        PC10    ------> USART2_TX
+        PC11    ------> USART2_RX
         */
         /* 配置Tx引脚为复用功能  */
         GPIO_InitStruct.Pin = _485_USART_TX_PIN;
@@ -275,13 +276,12 @@ USART外设的TXD引脚使用杜邦线连接到RXD引脚可进行自收发测试
     }
     /*控制收发引脚*/
     //进入接收模式,必须要有延时等待485处理完数据
-    #define _485_RX_EN()      _485_delay(1000);\
-    HAL_GPIO_WritePin(_485_RE_GPIO_PORT,_485_RE_PIN,GPIO_PIN_RESET);
-    _485_delay(1000);
+    #define _485_RX_EN()			_485_delay(1000);\
+    		HAL_GPIO_WritePin(_485_RE_GPIO_PORT,_485_RE_PIN,GPIO_PIN_SET); _485_delay(1000);
     //进入发送模式,必须要有延时等待485处理完数据
-    #define _485_TX_EN()      _485_delay(1000);\
-    HAL_GPIO_WritePin(_485_RE_GPIO_PORT,_485_RE_PIN,GPIO_PIN_SET);
-    _485_delay(1000);
+    #define _485_TX_EN()			_485_delay(1000);\
+    		HAL_GPIO_WritePin(_485_RE_GPIO_PORT,_485_RE_PIN,GPIO_PIN_RESET); _485_delay(1000);
+
 
 这两个宏中，主要是在控制电平输出前后加了一小段时间延时，这是为了给MAX485芯片预留响应时间，因为STM32的引脚状态电平变换后，MAX485芯片可能存在响应延时。例如，当STM32控制自己的引脚电平输出高电平(控制成发送状态)，然后立即通过TX信号线发送数据给MAX485芯片，而MAX485芯片由于状态不能马上切换，会导致丢失了部分STM32传送过来的数据，造成错误。
 
@@ -299,8 +299,8 @@ STM32使用485发送数据的过程也与普通的USART发送数据过程差不�
     //使用单字节数据发送前要使能发送引脚，发送后要使能接收引脚。
     void _485_SendByte(  uint8_t ch )
     {
-        /* 发送一个字节数据到USART1 */
-        HAL_UART_Transmit(&Uart2_Handle, (uint8_t *)&ch, 1, 0xFFFF);
+    	/* 发送一个字节数据到USART1 */
+        HAL_UART_Transmit(&Uart4_Handle, (uint8_t *)&ch, 1, 0xFFFF);	
     }
 
 上述代码中就是直接调用了STM32库函数HAL_UART_Transmit把要发送的数据写入到USART的数据寄存器，然后检查标志位等待发送完成。
@@ -323,61 +323,67 @@ main函数
 
     int main(void)
     {
-        char *pbuf;
-        uint16_t len;
-        /* 配置系统时钟为168 MHz */
-        SystemClock_Config();
-        /* 初始化RGB彩灯 */
-        LED_GPIO_Config();
-        /* 初始化USART1 配置模式为 115200 8-N-1 */
-        DEBUG_USART_Config();
-        /*初始化485使用的串口，使用中断模式接收*/
-        _485_Config();
-        Key_GPIO_Config();
-        printf("\r\n 欢迎使用野火  STM32 F407 开发板。\r\n");
-        printf("\r\n 野火F407 485通讯实验例程\r\n");
-        printf("\r\n 实验步骤：\r\n");
-
-        printf("\r\n 1.使用导线连接好两个485通讯设备\r\n");
-        printf("\r\n 2.使用跳线帽连接好:5v --- C/4-5V,485-D --- PD5,485-R ---PD6 \r\n");
-        printf("\r\n 3.若使用两个野火开发板进行实验，给两个开发板都下载本程序即可。\r\n");
-        printf("\r\n 4.准备好后，按下其中一个开发板的KEY1键，会用485向外发送0-255的数字 \r\n");
-        printf("\r\n 5.若开发板的485接收到256个字节数据，会把数据以16进制形式打印出来。 \r\n");
-
-        while (1) {
-            /*按一次按键发送一次数据*/
-            if (  Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON) {
-                uint16_t i;
-
-                LED_BLUE;
-
-                _485_TX_EN();
-
-                for (i=0; i<=0xff; i++) {
-                    _485_SendByte(i);  //发送数据
-                }
-
-                /*加短暂延时，保证485发送数据完毕*/
-                Delay(0xFFF);
-                _485_RX_EN();
-
-                LED_GREEN;
-
-                printf("\r\n发送数据成功！\r\n"); //使用调试串口打印调试信息到终端
-
-            } else {
-                LED_BLUE;
-
-                pbuf = get_rebuff(&len);
-                if (len>=256) {
-                    LED_GREEN;
-                    printf("\r\n接收到长度为%d的数据\r\n",len);
-                    _485_DEBUG_ARRAY((uint8_t*)pbuf,len);
-                    clean_rebuff();
-                }
-            }
-        }
+    	char *pbuf;
+    	uint16_t len;
+      /* 配置系统时钟为168 MHz */
+      SystemClock_Config();
+      /* 初始化RGB彩灯 */
+      LED_GPIO_Config();
+      /* 初始化USART1 配置模式为 115200 8-N-1 */
+      DEBUG_USART_Config();
+      /*初始化485使用的串口，使用中断模式接收*/
+      _485_Config();
+    	Key_GPIO_Config();
+    	printf("\r\n 欢迎使用野火  STM32 F407 开发板。\r\n");
+    	printf("\r\n 野火F407 485通讯实验例程\r\n");
+    	printf("\r\n 实验步骤：\r\n");
+    
+    	printf("\r\n 1.使用导线连接好两个485通讯设备\r\n");
+    	printf("\r\n 2.若使用两个野火开发板进行实验，给两个开发板都下载本程序即可。\r\n");
+    	printf("\r\n 3.准备好后，按下其中一个开发板的KEY1键，会使用485向外发送0-255的数字 \r\n");
+    	printf("\r\n 4.若开发板的485接收到256个字节数据，会把数据以16进制形式打印出来。 \r\n");
+    	
+      while(1)
+      {
+    		/*按一次按键发送一次数据*/
+    		if(	Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON)
+    		{
+    			uint16_t i;
+    			
+    			LED1_ON;
+    			
+    			_485_TX_EN();
+    			
+    			for(i=0;i<=0xff;i++)
+    			{
+    				_485_SendByte(i);	 //发送数据
+    			}
+    			
+    			/*加短暂延时，保证485发送数据完毕*/
+    			Delay(0xFFF);
+    			_485_RX_EN();
+    			
+    			LED2_ON;
+    			
+    			printf("\r\n发送数据成功！\r\n"); //使用调试串口打印调试信息到终端
+    
+    		}
+    		else
+    		{		
+    			LED2_ON;
+    			
+    			pbuf = get_rebuff(&len);
+    			if(len>=255)
+    			{
+    				LED_ALLON;
+    				printf("\r\n接收到长度为%d的数据\r\n",len);	
+    				_485_DEBUG_ARRAY((uint8_t*)pbuf,len);
+    				clean_rebuff();
+    			}
+    		}
+      }
     }
+
 
 在main函数中，首先初始化了LED、按键以及调试使用的串口，再调用前面分析的RS485_Config函数初始化了RS-485通讯使用的串口工作模式。
 
@@ -390,10 +396,8 @@ main函数
 
 下载验证这个485通讯实验需要您有两个实验板，操作步骤如下：
 
-(1)	按照“硬件设计”小节中的图例连接两个板子的485总线；
+(1)	按照“硬件设计”小节中的图例连接两个板子的485总线:A<-->A,B<-->B；
 
-(2)	使用跳线帽连接 : 485_R<--->PA3、485_D<--->PA2、C/4-5V<--->5V ;
+(2)	用USB线使实验板“USB TO UART”接口跟电脑连接起来，在电脑端打开串口调试助手，编译本章配套的程序，并给两个板子都下载该程序，然后复位。
 
-(3)	用USB线使实验板“USB TO UART”接口跟电脑连接起来，在电脑端打开串口调试助手，编译本章配套的程序，并给两个板子都下载该程序，然后复位。
-
-(4)	复位后在串口调试助手应看到485测试的调试信息，按一下其中一个实验板上的KEY1按键，另一个实验板会接收到报文，在串口调试助手可以看到相应的发送和接收的信息。
+(3)	复位后在串口调试助手应看到485测试的调试信息，按一下其中一个实验板上的KEY1按键，另一个实验板会接收到报文，在串口调试助手可以看到相应的发送和接收的信息。

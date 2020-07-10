@@ -14,7 +14,7 @@ TIM—高级定时器
 
 高级控制定时器时基单元包含一个16位自动重装载寄存器ARR，一个16位的计数器CNT，可向上/下计数，一个16位可编程预分频器PSC，预分频器时钟源有多种可选，有内部的时钟、外部时钟。还有一个8位的重复计数器RCR，这样最高可实现40位的可编程定时。
 
-STM32F407ZGT6的高级/通用定时器的IO分配具体见表 32-1。
+STM32F407IGT6的高级/通用定时器的IO分配具体见表 32-1。
 配套开发板因为IO资源紧缺，定时器的IO很多已经复用它途，故下表中的IO只有部分可用于定时器的实验。
 
 表 32‑1 高级控制和通用定时器通道引脚分布
@@ -629,26 +629,26 @@ PWM互补输出实验
    :name: 代码清单31_5
 
     /* 定时器 */
-    #define ADVANCE_TIM                     TIM8
-    #define ADVANCE_TIM_CLK_ENABLE()        __TIM8_CLK_ENABLE()
-
+    #define ADVANCE_TIM           				TIM8
+    #define ADVANCE_TIM_CLK_ENABLE()  			__TIM8_CLK_ENABLE()
+    
     /* TIM8通道1输出引脚 */
-    #define ADVANCE_OCPWM_PIN               GPIO_PIN_6
-    #define ADVANCE_OCPWM_GPIO_PORT         GPIOC
-    #define ADVANCE_OCPWM_GPIO_CLK_ENABLE()   __GPIOC_CLK_ENABLE()
-    #define ADVANCE_OCPWM_AF          	GPIO_AF3_TIM8
-
+    #define ADVANCE_OCPWM_PIN           		GPIO_PIN_5             
+    #define ADVANCE_OCPWM_GPIO_PORT     		GPIOI                    
+    #define ADVANCE_OCPWM_GPIO_CLK_ENABLE() 	__GPIOI_CLK_ENABLE()
+    #define ADVANCE_OCPWM_AF					GPIO_AF3_TIM8
+    
     /* TIM8通道1互补输出引脚 */
-    #define ADVANCE_OCNPWM_PIN                GPIO_PIN_5
-    #define ADVANCE_OCNPWM_GPIO_PORT          GPIOA
-    #define ADVANCE_OCNPWM_GPIO_CLK_ENABLE()  __GPIOA_CLK_ENABLE()
-    #define ADVANCE_OCNPWM_AF         	GPIO_AF3_TIM8
-
+    #define ADVANCE_OCNPWM_PIN            		GPIO_PIN_13              
+    #define ADVANCE_OCNPWM_GPIO_PORT      		GPIOH                     
+    #define ADVANCE_OCNPWM_GPIO_CLK_ENABLE()	__GPIOH_CLK_ENABLE()
+    #define ADVANCE_OCNPWM_AF					GPIO_AF3_TIM8
+    
     /* TIM8断路输入引脚 */
-    #define ADVANCE_BKIN_PIN                  GPIO_PIN_6
-    #define ADVANCE_BKIN_GPIO_PORT            GPIOA
-    #define ADVANCE_BKIN_GPIO_CLK_ENABLE()    __GPIOA_CLK_ENABLE()
-    #define ADVANCE_BKIN_AF           	     GPIO_AF3_TIM8
+    #define ADVANCE_BKIN_PIN              		GPIO_PIN_6              
+    #define ADVANCE_BKIN_GPIO_PORT        		GPIOA                      
+    #define ADVANCE_BKIN_GPIO_CLK_ENABLE()  	__GPIOA_CLK_ENABLE()
+    #define ADVANCE_BKIN_AF						GPIO_AF3_TIM8
 
 使用宏定义非常方便程序升级、移植。如果使用不同的定时器IO，修改这些宏即可。
 
@@ -849,31 +849,31 @@ PWM输入捕获实验
    :name: 代码清单31_9
 
     /* 通用定时器 */
-    #define GENERAL_TIM                       TIM2
-    #define GENERAL_TIM_CLK_ENABLE()          __TIM2_CLK_ENABLE()
-
+    #define GENERAL_TIM           		    	TIM4
+    #define GENERAL_TIM_CLK_ENABLE()       		__TIM4_CLK_ENABLE()
+    
     /* 通用定时器PWM输出 */
     /* PWM输出引脚 */
-    #define GENERAL_OCPWM_PIN                 GPIO_PIN_5
-    #define GENERAL_OCPWM_GPIO_PORT           GPIOA
-    #define GENERAL_OCPWM_GPIO_CLK_ENABLE()   __GPIOA_CLK_ENABLE()
-    #define GENERAL_OCPWM_AF          	GPIO_AF1_TIM2
-
+    #define GENERAL_OCPWM_PIN            		GPIO_PIN_14             
+    #define GENERAL_OCPWM_GPIO_PORT      		GPIOD                     
+    #define GENERAL_OCPWM_GPIO_CLK_ENABLE()		__GPIOD_CLK_ENABLE()
+    #define GENERAL_OCPWM_AF					GPIO_AF2_TIM3
+    
     /* 高级控制定时器 */
-    #define ADVANCE_TIM                       TIM8
-    #define ADVANCE_TIM_CLK_ENABLE()          __TIM8_CLK_ENABLE()
-
+    #define ADVANCE_TIM           		    	TIM8
+    #define ADVANCE_TIM_CLK_ENABLE()      		__TIM8_CLK_ENABLE()
+    
     /* 捕获/比较中断 */
-    #define ADVANCE_TIM_IRQn                  TIM8_CC_IRQn
-    #define ADVANCE_TIM_IRQHandler            TIM8_CC_IRQHandler
+    #define ADVANCE_TIM_IRQn					TIM8_CC_IRQn
+    #define ADVANCE_TIM_IRQHandler        		TIM8_CC_IRQHandler
     /* 高级控制定时器PWM输入捕获 */
     /* PWM输入捕获引脚 */
-    #define ADVANCE_ICPWM_PIN                 GPIO_PIN_6
-    #define ADVANCE_ICPWM_GPIO_PORT           GPIOC
-    #define ADVANCE_ICPWM_GPIO_CLK_ENABLE()   __GPIOC_CLK_ENABLE()
-    #define ADVANCE_ICPWM_AF                  GPIO_AF3_TIM8
-    #define ADVANCE_IC1PWM_CHANNEL            TIM_CHANNEL_1
-    #define ADVANCE_IC2PWM_CHANNEL            TIM_CHANNEL_2
+    #define ADVANCE_ICPWM_PIN              		GPIO_PIN_6              
+    #define ADVANCE_ICPWM_GPIO_PORT        		GPIOC                      
+    #define ADVANCE_ICPWM_GPIO_CLK_ENABLE()  	__GPIOC_CLK_ENABLE()
+    #define ADVANCE_ICPWM_AF					GPIO_AF3_TIM8
+    #define ADVANCE_IC1PWM_CHANNEL        		TIM_CHANNEL_1
+    #define ADVANCE_IC2PWM_CHANNEL        		TIM_CHANNEL_2
 
 使用宏定义非常方便程序升级、移植。如果使用不同的定时器IO，修改这些宏即可。
 
@@ -1101,7 +1101,7 @@ I2C作为间接输入模式，我们需要配置他的从模式，即从模式�
 下载验证
 '''''''''''''
 
-把编译好的程序烧写到开发板，用杜邦线把通用定时器的PWM输出引脚（PA5）连接到高级定时器的PWM输入引脚（PC6）。然后用USB线连接电脑与开发板的USB转串口，打开串口调试助手，即可看到捕获到的PWM信号的频率和占空比，具体见
+把编译好的程序烧写到开发板，用杜邦线把通用定时器的PWM输出引脚（PD14）连接到高级定时器的PWM输入引脚（PC6）。然后用USB线连接电脑与开发板的USB转串口，打开串口调试助手，即可看到捕获到的PWM信号的频率和占空比，具体见
 图31_19_。于此同时，可用示波器监控通用定时器输出的PWM信号，看下捕获到的信号是否正确，具体见 图31_20_。
 
 .. image:: media/image20.png

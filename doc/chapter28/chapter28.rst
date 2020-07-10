@@ -367,11 +367,11 @@ GT5688触控芯片有两个备选的I2C通讯地址，这是由芯片的上电�
    #define GTP_I2C_GTP_CLK()          __GPIOG_CLK_ENABLE()
 
    /*I2C引脚*/
-   #define GTP_I2C_SCL_PIN                  GPIO_PIN_7
-   #define GTP_I2C_SCL_GPIO_PORT            GPIOD
-
-   #define GTP_I2C_SDA_PIN                  GPIO_PIN_3
-   #define GTP_I2C_SDA_GPIO_PORT            GPIOD
+   #define GTP_I2C_SCL_PIN                  GPIO_PIN_4                 
+   #define GTP_I2C_SCL_GPIO_PORT            GPIOH                       
+   
+   #define GTP_I2C_SDA_PIN                  GPIO_PIN_5                 
+   #define GTP_I2C_SDA_GPIO_PORT            GPIOH  
 
    /*复位引脚*/
    #define GTP_RST_GPIO_PORT                GPIOD

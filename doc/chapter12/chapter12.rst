@@ -8,8 +8,7 @@ GPIO输出—使用固件库点亮LED
 硬件设计
 ~~~~~~~~
 
-在本教程中STM32芯片的PF6、PF7和PF8引脚分别与一个RGB灯的R灯（红灯）、G灯（蓝灯）和B灯（绿灯）连接，
-具体见 图12_1_，RGB灯里面的三个小灯都可以单独控制，如果有两个或者三个灯同时亮的话就会混合成其它的颜色。
+在本教程中STM32芯片的PA15、PE2、PG15和PB8引脚分别与四个LED灯连接，具体见 图12_1_。
 
 .. image:: media/image1.png
    :align: center
@@ -53,24 +52,25 @@ LED灯引脚宏定义
 
    //引脚定义
    /*******************************************************/
-   //R 红色灯
-   #define LED1_PIN                  GPIO_PIN_6
-   #define LED1_GPIO_PORT            GPIOF
-   #define LED1_GPIO_CLK_ENABLE()    __GPIOF_CLK_ENABLE()
-
-   //G 绿色灯
-   #define LED2_PIN                  GPIO_PIN_7
-   #define LED2_GPIO_PORT            GPIOF
-   #define LED2_GPIO_CLK_ENABLE()    __GPIOF_CLK_ENABLE()
-
-   //B 蓝色灯
-   #define LED3_PIN                  GPIO_PIN_8
-   #define LED3_GPIO_PORT            GPIOF
-   #define LED3_GPIO_CLK_ENABLE()    __GPIOF_CLK_ENABLE()
-
+   #define LED1_PIN                  GPIO_PIN_15               
+   #define LED1_GPIO_PORT            GPIOA                     
+   #define LED1_GPIO_CLK_ENABLE()    __GPIOA_CLK_ENABLE()
+   
+   #define LED2_PIN                  GPIO_PIN_2                 
+   #define LED2_GPIO_PORT            GPIOE                  
+   #define LED2_GPIO_CLK_ENABLE()    __GPIOE_CLK_ENABLE()
+   
+   #define LED3_PIN                  GPIO_PIN_15               
+   #define LED3_GPIO_PORT            GPIOG                     
+   #define LED3_GPIO_CLK_ENABLE()    __GPIOG_CLK_ENABLE()
+   
+   #define LED4_PIN                  GPIO_PIN_8               
+   #define LED4_GPIO_PORT            GPIOB                     
+   #define LED4_GPIO_CLK_ENABLE()    __GPIOB_CLK_ENABLE()
+   
    /************************************************************/
 
-以上代码分别把控制三盏LED灯的GPIO端口、GPIO引脚号以及GPIO端口时钟封装起来了。在实际控制的时候我们就直接用这些宏，以达到应用代码跟硬件无关的效果。
+以上代码分别把控制四盏LED灯的GPIO端口、GPIO引脚号以及GPIO端口时钟封装起来了。在实际控制的时候我们就直接用这些宏，以达到应用代码跟硬件无关的效果。
 
 其中的GPIO时钟宏“__GPIOF_CLK_ENABLE()”是STM32HAL库定义的GPIO端口时钟相关的宏，它的作用与“GPIO_PIN_x”这类宏类似，是用于指示寄存器位的，方便库函数使用。它们指示GPIOF时钟，下面初始化GPIO时钟的时候可以看到它的用法。
 
@@ -97,11 +97,13 @@ LED灯引脚宏定义
 
     /* 带参宏，可以像内联函数一样使用 */
 
-    #define LED1(a) HAL_GPIO_WritePin(LED1_GPIO_PORT,LED1_PIN,a)
-
-    #define LED2(a) HAL_GPIO_WritePin(LED2_GPIO_PORT,LED2_PIN,a)
-
-    #define LED3(a) HAL_GPIO_WritePin(LED2_GPIO_PORT,LED3_PIN,a)
+    #define LED1(a)	HAL_GPIO_WritePin(LED1_GPIO_PORT,LED1_PIN,a)
+    
+    #define LED2(a)	HAL_GPIO_WritePin(LED2_GPIO_PORT,LED2_PIN,a)
+    
+    #define LED3(a)	HAL_GPIO_WritePin(LED3_GPIO_PORT,LED3_PIN,a)
+    
+    #define LED4(a)	HAL_GPIO_WritePin(LED4_GPIO_PORT,LED4_PIN,a)
 
     /* 直接操作寄存器的方法控制IO */
 
@@ -115,113 +117,49 @@ LED灯引脚宏定义
 
     /* 定义控制IO的宏 */
 
-    #define LED1_TOGGLE digitalToggle(LED1_GPIO_PORT,LED1_PIN)
+    #define LED1_TOGGLE		digitalToggle(LED1_GPIO_PORT,LED1_PIN)
+    #define LED1_OFF		digitalHi(LED1_GPIO_PORT,LED1_PIN)
+    #define LED1_ON			digitalLo(LED1_GPIO_PORT,LED1_PIN)
+    
+    #define LED2_TOGGLE		digitalToggle(LED2_GPIO_PORT,LED2_PIN)
+    #define LED2_OFF		digitalHi(LED2_GPIO_PORT,LED2_PIN)
+    #define LED2_ON			digitalLo(LED2_GPIO_PORT,LED2_PIN)
+    
+    #define LED3_TOGGLE		digitalToggle(LED3_GPIO_PORT,LED3_PIN)
+    #define LED3_OFF		digitalHi(LED3_GPIO_PORT,LED3_PIN)
+    #define LED3_ON			digitalLo(LED3_GPIO_PORT,LED3_PIN)
+    
+    #define LED4_TOGGLE		digitalToggle(LED4_GPIO_PORT,LED4_PIN)
+    #define LED4_OFF		digitalHi(LED4_GPIO_PORT,LED4_PIN)
+    #define LED4_ON			digitalLo(LED4_GPIO_PORT,LED4_PIN)
 
-    #define LED1_OFF digitalHi(LED1_GPIO_PORT,LED1_PIN)
-
-    #define LED1_ON digitalLo(LED1_GPIO_PORT,LED1_PIN)
-
-    #define LED2_TOGGLE digitalToggle(LED2_GPIO_PORT,LED2_PIN)
-
-    #define LED2_OFF digitalHi(LED2_GPIO_PORT,LED2_PIN)
-
-    #define LED2_ON digitalLo(LED2_GPIO_PORT,LED2_PIN)
-
-    #define LED3_TOGGLE digitalToggle(LED3_GPIO_PORT,LED3_PIN)
-
-    #define LED3_OFF digitalHi(LED3_GPIO_PORT,LED3_PIN)
-
-    #define LED3_ON digitalLo(LED3_GPIO_PORT,LED3_PIN)
-
-    /* 基本混色，后面高级用法使用PWM可混出全彩颜色,且效果更好 */
-
-    //红
-
-    #define LED_RED \
-
-    LED1_ON;\
-
-    LED2_OFF\
-
-    LED3_OFF
-
-    //绿
-
-    #define LED_GREEN \
-
-    LED1_OFF;\
-
-    LED2_ON\
-
-    LED3_OFF
-
-    //蓝
-
-    #define LED_BLUE \
-
-    LED1_OFF;\
-
-    LED2_OFF\
-
-    LED3_ON
-
-    //黄(红+绿)
-
-    #define LED_YELLOW \
-
-    LED1_ON;\
-
-    LED2_ON\
-
-    LED3_OFF
-
-    //紫(红+蓝)
-
-    #define LED_PURPLE \
-
-    LED1_ON;\
-
-    LED2_OFF\
-
-    LED3_ON
-
-    //青(绿+蓝)
-
-    #define LED_CYAN \
-
-    LED1_OFF;\
-
-    LED2_ON\
-
-    LED3_ON
-
-    //白(红+绿+蓝)
-
-    #define LED_WHITE \
-
-    LED1_ON;\
-
-    LED2_ON\
-
-    LED3_ON
-
-    //黑(全部关闭)
-
-    #define LED_RGBOFF \
-
-    LED1_OFF;\
-
-    LED2_OFF\
-
-    LED3_OFF
+    //(全部打开)
+    #define LED_ALLON	\
+    					LED1_ON;\
+    					LED2_ON\
+    					LED3_ON\
+    					LED4_ON
+    					
+    //(全部关闭)
+    #define LED_ALLOFF	\
+    					LED1_OFF;\
+    					LED2_OFF\
+    					LED3_OFF\
+    					LED4_OFF
+    
+    #define LED_ALLTOGGLE \
+    					LED1_TOGGLE;\
+    					LED2_TOGGLE\
+    					LED3_TOGGLE\
+    					LED4_TOGGLE
 
 这部分宏控制LED亮灭的操作是直接向BSRR寄存器写入控制指令来实现的，对BSRR低16位写1输出高电平，对BSRR高16位写1输出低电平，对ODR寄存器某位进行异或操作可反转位的状态。
 
 RGB彩灯可以实现混色，如最后一段代码我们控制红灯和绿灯亮而蓝灯灭，可混出黄色效果。
 
-代码中的“\”是C语言中的续行符语法，表示续行符的下一行与续行符所在的代码是同一行。代码中因为宏定义关键字“#define”只是对当前行有效，所以我们使用续行符来连接起来，以下的代码是等效的：
+代码中的“\\”是C语言中的续行符语法，表示续行符的下一行与续行符所在的代码是同一行。代码中因为宏定义关键字“#define”只是对当前行有效，所以我们使用续行符来连接起来，以下的代码是等效的：
 
-#define LED_YELLOW LED1_ON; LED2_ON; LED3_OFF
+#define LED_ALLON LED1_ON; LED2_ON; LED3_OFF
 
 应用续行符的时候要注意，在“\”后面不能有任何字符(包括注释、空格)，只能直接回车。
 
@@ -235,57 +173,47 @@ LED GPIO初始化函数
    :name: 代码清单12_3
 
     void LED_GPIO_Config(void)
-
-    {
-
+    {		
+    		
         /*定义一个GPIO_InitTypeDef类型的结构体*/
-
-        GPIO_InitTypeDef GPIO_InitStruct;
-
+        GPIO_InitTypeDef  GPIO_InitStruct;
+    
         /*开启LED相关的GPIO外设时钟*/
-
         LED1_GPIO_CLK_ENABLE();
-
         LED2_GPIO_CLK_ENABLE();
-
         LED3_GPIO_CLK_ENABLE();
-
-        /*选择要控制的GPIO引脚*/
-
-        GPIO_InitStruct.Pin = LED1_PIN;
-
+    	LED4_GPIO_CLK_ENABLE();
+    	
+        /*选择要控制的GPIO引脚*/															   
+        GPIO_InitStruct.Pin = LED1_PIN;	
+    
         /*设置引脚的输出类型为推挽输出*/
-
-        GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-
+        GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;  
+    
         /*设置引脚为上拉模式*/
-
-        GPIO_InitStruct.Pull = GPIO_PULLUP;
-
-        /*设置引脚速率为高速 */
-
-        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-
+        GPIO_InitStruct.Pull  = GPIO_PULLUP;
+    
+        /*设置引脚速率为高速 */   
+        GPIO_InitStruct.Speed = GPIO_SPEED_HIGH; 
+    
         /*调用库函数，使用上面配置的GPIO_InitStructure初始化GPIO*/
-
-        HAL_GPIO_Init(LED1_GPIO_PORT, &GPIO_InitStruct);
-
-        /*选择要控制的GPIO引脚*/
-
-        GPIO_InitStruct.Pin = LED2_PIN;
-
-        HAL_GPIO_Init(LED2_GPIO_PORT, &GPIO_InitStruct);
-
-        /*选择要控制的GPIO引脚*/
-
-        GPIO_InitStruct.Pin = LED3_PIN;
-
-        HAL_GPIO_Init(LED3_GPIO_PORT, &GPIO_InitStruct);
-
+        HAL_GPIO_Init(LED1_GPIO_PORT, &GPIO_InitStruct);	
+    
+        /*选择要控制的GPIO引脚*/															   
+        GPIO_InitStruct.Pin = LED2_PIN;	
+        HAL_GPIO_Init(LED2_GPIO_PORT, &GPIO_InitStruct);	
+    
+        /*选择要控制的GPIO引脚*/															   
+        GPIO_InitStruct.Pin = LED3_PIN;	
+        HAL_GPIO_Init(LED3_GPIO_PORT, &GPIO_InitStruct);	
+    
+        /*选择要控制的GPIO引脚*/															   
+        GPIO_InitStruct.Pin = LED4_PIN;	
+        HAL_GPIO_Init(LED4_GPIO_PORT, &GPIO_InitStruct);	
+    
         /*关闭RGB灯*/
-
-        LED_RGBOFF;
-
+        LED_ALLOFF;
+    
     }
 
 整个函数与“构建库函数雏形”章节中的类似，主要区别是硬件相关的部分使用宏来代替，初始化GPIO端口时钟时也采用了STM32库函数，函数执行流程如下：
@@ -314,78 +242,39 @@ LED GPIO初始化函数
    :name: 代码清单12_4
 
     int main(void)
-
     {
-
-        /* 系统时钟初始化成216 MHz */
-
+        /* 系统时钟初始化成168MHz */
         SystemClock_Config();
-
+    
         /* LED 端口初始化 */
-
         LED_GPIO_Config();
-
+    
         /* 控制LED灯 */
-
-        while (1) {
-
-            LED1( ON ); // 亮
-
+        while (1)
+        {
+            LED1( ON );			 // 亮 
             HAL_Delay(1000);
-
-            LED1( OFF ); // 灭
-
+            LED1( OFF );		  // 灭
+    
+            LED2( ON );			// 亮 
             HAL_Delay(1000);
-
-            LED2( ON ); // 亮
-
+            LED2( OFF );		  // 灭
+    
+            LED3( ON );			 // 亮 
             HAL_Delay(1000);
-
-            LED2( OFF ); // 灭
-
-            LED3( ON ); // 亮
-
+            LED3( OFF );		  // 灭	
+    
+            LED4( ON );			 // 亮 
             HAL_Delay(1000);
-
-            LED3( OFF ); // 灭
-
+            LED4( OFF );		  // 灭	
             /*轮流显示 红绿蓝黄紫青白 颜色*/
-
-            LED_RED;
-
+            LED_ALLON;
             HAL_Delay(1000);
-
-            LED_GREEN;
-
+            
+            LED_ALLOFF;
             HAL_Delay(1000);
-
-            LED_BLUE;
-
-            HAL_Delay(1000);
-
-            LED_YELLOW;
-
-            HAL_Delay(1000);
-
-            LED_PURPLE;
-
-            HAL_Delay(1000);
-
-            LED_CYAN;
-
-            HAL_Delay(1000);
-
-            LED_WHITE;
-
-            HAL_Delay(1000);
-
-            LED_RGBOFF;
-
-            HAL_Delay(1000);
-
         }
-
-     }
+    }
 
 在main函数中，调用SystemClock_Config函数初始化系统的时钟为168MHz，所有程序都必须设置好系统的时钟再进行其他操作，具体设置将在RCC时钟章节详细讲解，接着调用我们前面定义的LED_GPIO_Config初始化好LED的控制引脚，然后直接调用各种控制LED灯亮灭的宏来实现LED灯的控制，延时采用库自带基于滴答时钟延时HAL_Delay单位为ms，直接调用即可，这里HAL_Delay(1000)表示延时1s。
 

@@ -1746,7 +1746,7 @@ Target”对话框中的存储器配置就生效了。主要配置是在Device�
 
 图 40‑49 选择芯片类型
 
-图中Device标签页中选定了芯片的型号为STM32F407ZGTx，选中后，在Target标签页中的存储器信息会根据芯片更新。
+图中Device标签页中选定了芯片的型号为STM32F407IGTx，选中后，在Target标签页中的存储器信息会根据芯片更新。
 
 .. image:: media/image49.jpg
    :align: center

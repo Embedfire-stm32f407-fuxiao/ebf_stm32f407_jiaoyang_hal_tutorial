@@ -316,7 +316,7 @@ DMA运行高效，使用方便，在很多测试实验都会用到，这里先�
 硬件设计
 ''''''''''''''''''''''''''''''''
 
-DMA存储器到存储器实验不需要其他硬件要求，只用到RGB彩色灯用于指示程序状态，关于RGB彩色灯电路可以参考GPIO章节。
+DMA存储器到存储器实验不需要其他硬件要求，只用到LED灯用于指示程序状态，关于LED灯电路可以参考GPIO章节。
 
 软件设计
 ''''''''''''''''''''''''''''''''
@@ -418,7 +418,7 @@ DMA数据配置
                 (uint32_t)aDST_Buffer,BUFFER_SIZE);
         /* 判断DMA状态 */
         if (DMA_status != HAL_OK) {
-            /* DMA出错就让程序运行下面循环：RGB彩色灯闪烁 */
+            /* DMA出错就让程序运行下面循环：LED灯闪烁 */
             while (1) {
                 LED_RED;
                 Delay(0xFFFFFF);
@@ -474,47 +474,52 @@ HAL_DMA_Start函数用于启动DMA数据流传输，源地址和目标地址使�
 
     int main(void)
     {
-        /* 定义存放比较结果变量 */
-        uint8_t TransferStatus;
-        /* 系统时钟初始化成168 MHz */
-        SystemClock_Config();
-        /* LED 端口初始化 */
-        LED_GPIO_Config();
-        /* 设置RGB彩色灯为紫色 */
-        LED_PURPLE;
-
-        /* 简单延时函数 */
-        Delay(0xFFFFFF);
-
-        /* DMA传输配置 */
-        DMA_Config();
-
-        /* 等待DMA传输完成 */
-        while (__HAL_DMA_GET_FLAG(&DMA_Handle,DMA_FLAG_TCIF0_4)==DISABLE) {
-
-        }
-
-        /* 比较源数据与传输后数据 */
-        TransferStatus=Buffercmp(aSRC_Const_Buffer, aDST_Buffer, BUFFER_SIZE);
-
-        /* 判断源数据与传输后数据比较结果*/
-        if (TransferStatus==0) {
-            /* 源数据与传输后数据不相等时RGB彩色灯显示红色 */
-            LED_RED;
-        } else {
-            /* 源数据与传输后数据相等时RGB彩色灯显示蓝色 */
-            LED_BLUE;
-        }
-
-        while (1) {
-        }
+    	/* 定义存放比较结果变量 */
+    	uint8_t TransferStatus;
+    	/* 系统时钟初始化成168 MHz */
+    	SystemClock_Config();
+    	/* LED 端口初始化 */
+    	LED_GPIO_Config();
+    	/* 设置LED1亮 */
+    	LED1_ON;  
+    
+    	/* 简单延时函数 */
+    	Delay(0xFFFFFF);  
+    
+    	/* DMA传输配置 */
+    	DMA_Config(); 
+      
+    	/* 等待DMA传输完成 */
+    	while(__HAL_DMA_GET_FLAG(&DMA_Handle,DMA_FLAG_TCIF0_4)==DISABLE)
+    	{
+    
+    	}   
+    
+    	/* 比较源数据与传输后数据 */
+    	TransferStatus=Buffercmp(aSRC_Const_Buffer, aDST_Buffer, BUFFER_SIZE);
+    
+    	/* 判断源数据与传输后数据比较结果*/
+    	if(TransferStatus==0)  
+    	{
+    		/* 源数据与传输后数据不相等时灯显示红色 */
+    		LED2_ON;
+    	}
+    	else
+    	{ 
+    		/* 源数据与传输后数据相等时所以灯亮 */
+    		LED_ALLON;
+    	}
+    
+    	while (1)
+    	{		
+    	}
     }
 
 首先定义一个变量用来保存存储器数据比较结果。
 
 SystemClock_Config函数初始化系统时钟。
 
-RGB彩色灯用来指示程序进程，使用之前需要初始化它，LED_GPIO_Config定义在bsp_led.c文件中。开始设置RGB彩色灯为紫色，LED_PURPLE是定义在bsp_led.h文件的一个宏定义。
+LED灯用来指示程序进程，使用之前需要初始化它，LED_GPIO_Config定义在bsp_led.c文件中。开始设置LED1亮，LED1_ON是定义在bsp_led.h文件的一个宏定义。
 
 Delay函数只是一个简单的延时函数。
 
@@ -524,12 +529,12 @@ __HAL_DMA_GET_FLAG函数获取DMA数据流事件标志位的当前状态，这�
 
 确定DMA传输完成之后就可以调用Buffercmp函数比较源数据与DMA传输后目标地址的数据是否一一对应。TransferStatus保存比较结果，如果为1表示两个数据源一一对应相等说明DMA传输成功；相反，如果为0表示两个数据源数据存在不等情况，说明DMA传输出错。
 
-如果DMA传输成功设置RGB彩色灯为蓝色，如果DMA传输出错设置RGB彩色灯为红色。
+如果DMA传输成功设置所有LED亮，如果DMA传输出错设置LED2亮。
 
 下载验证
 ============
 
-确保开发板供电正常，编译程序并下载。观察RGB彩色灯变化情况。正常情况下RGB彩色灯先为紫色，然后变成蓝色。如果DMA传输出错才会为红色。
+确保开发板供电正常，编译程序并下载。观察LED灯变化情况。正常情况下LED1点亮，然后所有LED点亮。如果DMA传输出错LED2才会为亮。
 
 DMA存储器到外设模式实验
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -578,43 +583,30 @@ USART和DMA宏定义
      //引脚定义
 
      /*******************************************************/
-
-     #define DEBUG_USART USART1
-
-     #define DEBUG_USART_CLK_ENABLE() __USART1_CLK_ENABLE();
-
-     #define DEBUG_USART_RX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_RX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_RX_PIN GPIO_PIN_10
-
-     #define DEBUG_USART_RX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_TX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_TX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_TX_PIN GPIO_PIN_9
-
-     #define DEBUG_USART_TX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_IRQHandler USART1_IRQHandler
-
-     #define DEBUG_USART_IRQ USART1_IRQn
+    #define DEBUG_USART                             USART1
+    #define DEBUG_USART_CLK_ENABLE()                __USART1_CLK_ENABLE();
+    
+    #define DEBUG_USART_RX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_RX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_RX_PIN                      GPIO_PIN_7
+    #define DEBUG_USART_RX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_TX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_TX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_TX_PIN                      GPIO_PIN_6
+    #define DEBUG_USART_TX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_IRQHandler                  USART1_IRQHandler
+    #define DEBUG_USART_IRQ                 		    USART1_IRQn
 
      /************************************************************/
 
      //DMA
-
-     #define SENDBUFF_SIZE 10//发送的数据量
-
-     #define DEBUG_USART_DMA_CLK_ENABLE() __DMA2_CLK_ENABLE()
-
-     #define DEBUG_USART_DMA_CHANNEL DMA_CHANNEL_4
-
-     #define DEBUG_USART_DMA_STREAM DMA2_Stream7
-
+    #define SENDBUFF_SIZE                     		10//发送的数据量
+    #define DEBUG_USART_DMA_CLK_ENABLE()      		__DMA2_CLK_ENABLE()	
+    #define DEBUG_USART_DMA_CHANNEL           		DMA_CHANNEL_4
+    #define DEBUG_USART_DMA_STREAM            		DMA2_Stream7
+    
 使用宏定义设置外设配置方便程序修改和升级。
 
 USART部分设置与USART章节内容相同，可以参考USART章节内容理解。
@@ -696,7 +688,7 @@ __HAL_LINKDMA函数用于链接DMA数据流及通道到串口外设通道上。
         /* 配置使用DMA模式 */
         USART_DMA_Config();
 
-        /* 配置RGB彩色灯 */
+        /* 配置LED灯 */
         LED_GPIO_Config();
 
         printf("\r\n USART1 DMA TX 测试 \r\n");
@@ -726,7 +718,7 @@ Debug_USART_Config函数定义在bsp_usart_dma.c中，它完成USART初始化配
 
 USART_DMA_Config函数也是定义在bsp_usart_dma.c中，之前我们已经详细分析了。
 
-LED_GPIO_Config函数定义在bsp_led.c中，它完成RGB彩色灯初始化配置，具体可参考GPIO章节讲解。
+LED_GPIO_Config函数定义在bsp_led.c中，它完成LED灯初始化配置，具体可参考GPIO章节讲解。
 
 使用for循环填充源数据，SendBuff[SENDBUFF_SIZE]是一个全局无符号8位整数数组，是DMA传输的源数据。
 
@@ -738,6 +730,6 @@ DMA传输过程是不占用CPU资源的，可以一边传输一次运行其他�
 ===========
 
 保证开发板相关硬件连接正确，用USB线连接开发板“USB TO UART”接口跟电脑，在电脑端打开串口调试助手，
-把编译好的程序下载到开发板。程序运行后在串口调试助手可接收到大量的数据，同时开发板上RGB彩色灯不断闪烁。
+把编译好的程序下载到开发板。程序运行后在串口调试助手可接收到大量的数据，同时开发板上LED灯不断闪烁。
 
 这里要注意为演示DMA持续运行并且CPU还能处理其它事情，持续使用DMA发送数据，量非常大，长时间运行可能会导致电脑端串口调试助手会卡死，鼠标乱飞的情况，所以在测试时最好把串口调试助手的自动清除接收区数据功能勾选上或把DMA配置中的循环模式改为单次模式。

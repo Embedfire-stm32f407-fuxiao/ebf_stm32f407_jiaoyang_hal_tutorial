@@ -746,8 +746,8 @@ PCB底板还有一个连接到电容触摸屏控制器的FPC接口，用于检�
    #define      ILI9806G_RST_PIN               GPIO_PIN_11
 
    //背光引脚
-   #define      ILI9806G_BK_PORT               GPIOF
-   #define      ILI9806G_BK_PIN                GPIO_PIN_9
+   #define      ILI9806G_BK_PORT               GPIOE
+   #define      ILI9806G_BK_PIN                GPIO_PIN_5
 
    /********数据信号线***************/
    #define      ILI9806G_D0_PORT               GPIOD
@@ -767,43 +767,47 @@ PCB底板还有一个连接到电容触摸屏控制器的FPC接口，用于检�
 
    static void ILI9806G_GPIO_Config ( void )
    {
-      GPIO_InitTypeDef  GPIO_Initure;
-      /* Enable GPIOs clock */
-      __HAL_RCC_GPIOD_CLK_ENABLE();
-      __HAL_RCC_GPIOE_CLK_ENABLE();
-      __HAL_RCC_GPIOF_CLK_ENABLE();
-      __HAL_RCC_GPIOG_CLK_ENABLE();
-      __HAL_RCC_FSMC_CLK_ENABLE();      //使能FSMC时钟
-      /* Common GPIO configuration */
-      GPIO_Initure.Mode      = GPIO_MODE_OUTPUT_PP; //推挽输出
-      GPIO_Initure.Pull      = GPIO_PULLUP;
-      GPIO_Initure.Speed     = GPIO_SPEED_HIGH;
-
-      GPIO_Initure.Pin=GPIO_PIN_10;
-      HAL_GPIO_Init(GPIOG,&GPIO_Initure);
-
-      //初始化PF11
-      GPIO_Initure.Pin=GPIO_PIN_11;
-      HAL_GPIO_Init(GPIOF,&GPIO_Initure);
-
-      GPIO_Initure.Mode=GPIO_MODE_AF_PP;
-      GPIO_Initure.Alternate=GPIO_AF12_FSMC;  //复用为FSMC
-
-      //初始化PD0,1,4,5,8,9,10,14,15
-      GPIO_Initure.Pin=GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5|GPIO_P
-                        IN_8|\
-                        GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_14|GPIO_PIN_15;
-      HAL_GPIO_Init(GPIOD, &GPIO_Initure);
-
-      //初始化PE7,8,9,10,11,12,13,14,15
-      GPIO_Initure.Pin=GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|\
+   	GPIO_InitTypeDef  GPIO_Initure;
+       /* Enable GPIOs clock */
+     __HAL_RCC_GPIOD_CLK_ENABLE();
+     __HAL_RCC_GPIOE_CLK_ENABLE();
+     __HAL_RCC_GPIOF_CLK_ENABLE();
+     __HAL_RCC_GPIOG_CLK_ENABLE();
+     __HAL_RCC_FSMC_CLK_ENABLE();			//使能FSMC时钟
+       /* Common GPIO configuration */
+     GPIO_Initure.Mode      = GPIO_MODE_OUTPUT_PP; //推挽输出
+     GPIO_Initure.Pull      = GPIO_PULLUP;
+     GPIO_Initure.Speed     = GPIO_SPEED_HIGH;
+     
+     GPIO_Initure.Pin=GPIO_PIN_5;
+   	HAL_GPIO_Init(GPIOE,&GPIO_Initure);
+    
+     GPIO_Initure.Pin=GPIO_PIN_10;
+   	HAL_GPIO_Init(GPIOG,&GPIO_Initure);
+     
+     //初始化PF11
+   	GPIO_Initure.Pin=GPIO_PIN_11;
+   	HAL_GPIO_Init(GPIOF,&GPIO_Initure);
+     
+     GPIO_Initure.Mode=GPIO_MODE_AF_PP; 
+     GPIO_Initure.Alternate=GPIO_AF12_FSMC;	//复用为FSMC
+     
+   	//初始化PD0,1,4,5,8,9,10,14,15
+   	GPIO_Initure.Pin=GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_8|\
+   					         GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_14|GPIO_PIN_15; 
+     HAL_GPIO_Init(GPIOD, &GPIO_Initure);
+     
+     	//初始化PE7,8,9,10,11,12,13,14,15
+   	GPIO_Initure.Pin=GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|\
                         GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
-      HAL_GPIO_Init(GPIOE,&GPIO_Initure);
-
-      //初始化PF9
-      GPIO_Initure.Pin=GPIO_PIN_0|GPIO_PIN_9;
-      HAL_GPIO_Init(GPIOF,&GPIO_Initure);
+   	HAL_GPIO_Init(GPIOE,&GPIO_Initure);
+   	
+   	//初始化PF9
+   	GPIO_Initure.Pin=GPIO_PIN_0;
+   	HAL_GPIO_Init(GPIOF,&GPIO_Initure);
+     
    }
+
 
 与控制SRAM中的GPIO初始化类似，对于FSMC引脚，全部直接初始化为复用推挽输出模式即可，而背光BK引脚及液晶复信RST信号则被初始化成普通的推挽输出模式，这两个液晶控制信号直接输出普通的电平控制即可。
 
@@ -1360,7 +1364,7 @@ ILI9806G_DrawRectangle函数分成两部分，它根据输入参数ucFilled是�
    //参数可选值为0-7
    //调用ILI9806G_GramScan函数设置方向时会自动更改
    //LCD刚初始化完成时会使用本默认值
-   uint8_t LCD_SCAN_MODE = 6;
+   uint8_t LCD_SCAN_MODE = 5;
 
    /**
    * @brief  设置ILI9806G的GRAM的扫描方向

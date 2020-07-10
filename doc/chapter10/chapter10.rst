@@ -83,8 +83,8 @@ STM32CubeMX下载地址：ST官网搜索STM32CubeMX
 选择CPU型号
 ......................
 
-这个根据你开发板使用的CPU具体的型号来选择， M4挑战者选STM32F407ZGT型号。
-我们直接在搜索框输入型号STM32F407ZG最终确认STM32F407ZGTx为我们实际使用型号。
+这个根据你开发板使用的CPU具体的型号来选择， 野火骄阳电机控制开发板选STM32F407IGT型号。
+我们直接在搜索框输入型号STM32F407IG最终确认STM32F407IGTx为我们实际使用型号。
 
 .. image:: media/image10.png
    :align: center
@@ -105,7 +105,7 @@ Resonator，即使用外部晶振作为HSE的时钟源。
 配置IO口
 ......................
 
-这个工程简单控制一个LED周期闪烁，我们只需要配置一个IO即可，这里选定控制红色LED的引脚PF6，通过搜索框搜索可以定位IO口的引脚位置，图中会闪烁显示，配置PF6的属性为GPIO_Output。
+这个工程简单控制一个LED周期闪烁，我们只需要配置一个IO即可，这里选定控制LED的引脚PA15，通过搜索框搜索可以定位IO口的引脚位置，图中会闪烁显示，配置PA15的属性为GPIO_Output。
 
 .. image:: media/image12.png
    :align: center
@@ -132,7 +132,7 @@ APB2分频系数选择为/2即PCLK2位84MHz。
 进一步配置IO的具体属性
 ............................................
 
-点击Configuration，进入系统详细配置，选着GPIO，配置PH10的默认电平，开漏输出，无上下拉，低速模式。引脚标签为LED_R。
+点击Configuration，进入系统详细配置，选着GPIO，配置PA15的默认电平，开漏输出，无上下拉，低速模式。引脚标签为随意填写。
 
 .. image:: media/image15.png
    :align: center
@@ -152,9 +152,9 @@ APB2分频系数选择为/2即PCLK2位84MHz。
 生成代码
 ......................
 
-点击GENERATE CODE,在设定的路径成功生成代码，选着打开工程。
+点击GENERATE CODE,在设定的路径成功生成代码，选着中间的选项打开工程。
 
-.. image:: media/image16.png
+.. image:: media/image18.png
    :align: center
    :alt: 图 10‑17成功生成代码
    :name: 图10_17
@@ -164,7 +164,7 @@ APB2分频系数选择为/2即PCLK2位84MHz。
 
 打开工程后在main函数中的主循环插入用户代码，目的是让红色LED周期闪烁。
 
-.. image:: media/image16.png
+.. image:: media/image19.png
    :align: center
    :alt: 图 10‑18添加用户测试代码
    :name: 图10_18
@@ -174,7 +174,7 @@ APB2分频系数选择为/2即PCLK2位84MHz。
 
 配置下载工具为CMSIS-DAP，程序下载完后复位并运行。
 
-.. image:: media/image16.png
+.. image:: media/image20.png
    :align: center
    :alt: 图 10‑19配置下载调试工具
    :name: 图10_19

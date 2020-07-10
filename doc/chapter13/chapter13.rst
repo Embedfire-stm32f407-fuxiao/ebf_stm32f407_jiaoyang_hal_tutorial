@@ -60,17 +60,25 @@ STM32 HAL库中GPIO初始化结构体GPIO_TypeDef的定义与“定义引脚模�
 
     /*******************************************************/
 
-     #define KEY1_PIN GPIO_PIN_0
-
-     #define KEY1_GPIO_PORT GPIOA
-
-     #define KEY1_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define KEY2_PIN GPIO_PIN_13
-
-     #define KEY2_GPIO_PORT GPIOC
-
-     #define KEY2_GPIO_CLK_ENABLE() __GPIOC_CLK_ENABLE()
+    #define KEY1_PIN                  GPIO_PIN_0                 
+    #define KEY1_GPIO_PORT            GPIOA                      
+    #define KEY1_GPIO_CLK_ENABLE()    __GPIOA_CLK_ENABLE()
+    
+    #define KEY2_PIN                  GPIO_PIN_13                 
+    #define KEY2_GPIO_PORT            GPIOC                      
+    #define KEY2_GPIO_CLK_ENABLE()    __GPIOC_CLK_ENABLE()
+    
+    #define KEY3_PIN                  GPIO_PIN_2                 
+    #define KEY3_GPIO_PORT            GPIOG                    
+    #define KEY3_GPIO_CLK_ENABLE()    __GPIOG_CLK_ENABLE()
+    
+    #define KEY4_PIN                  GPIO_PIN_3                
+    #define KEY4_GPIO_PORT            GPIOG                     
+    #define KEY4_GPIO_CLK_ENABLE()    __GPIOG_CLK_ENABLE()
+    
+    #define KEY5_PIN                  GPIO_PIN_4                
+    #define KEY5_GPIO_PORT            GPIOG                     
+    #define KEY5_GPIO_CLK_ENABLE()    __GPIOG_CLK_ENABLE()
 
     /*******************************************************/
 
@@ -96,42 +104,32 @@ STM32 HAL库中GPIO初始化结构体GPIO_TypeDef的定义与“定义引脚模�
 .. code-block:: c
    :caption: 代码清单 13‑2 按键GPIO初始化函数
    :name: 代码清单13_2
-
+    
     void Key_GPIO_Config(void)
-
     {
         GPIO_InitTypeDef GPIO_InitStructure;
-
         /*开启按键GPIO口的时钟*/
-
         KEY1_GPIO_CLK_ENABLE();
-
         KEY2_GPIO_CLK_ENABLE();
-
-        /*选择按键的引脚*/
-
-        GPIO_InitStructure.Pin = KEY1_PIN;
-
+    	KEY3_GPIO_CLK_ENABLE();
+    	KEY4_GPIO_CLK_ENABLE();
+    	KEY5_GPIO_CLK_ENABLE();
+        /*选择按键的引脚*/	
+        GPIO_InitStructure.Pin = KEY1_PIN; 
         /*设置引脚为输入模式*/
-
-        GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
-
+        GPIO_InitStructure.Mode = GPIO_MODE_INPUT; 
         /*设置引脚不上拉也不下拉*/
-
         GPIO_InitStructure.Pull = GPIO_NOPULL;
-
         /*使用上面的结构体初始化按键*/
-
         HAL_GPIO_Init(KEY1_GPIO_PORT, &GPIO_InitStructure);
-
         /*选择按键的引脚*/
-
-        GPIO_InitStructure.Pin = KEY2_PIN;
-
+        GPIO_InitStructure.Pin = KEY2_PIN; 
         /*使用上面的结构体初始化按键*/
-
+        HAL_GPIO_Init(KEY1_GPIO_PORT, &GPIO_InitStructure);
         HAL_GPIO_Init(KEY2_GPIO_PORT, &GPIO_InitStructure);
-
+    	HAL_GPIO_Init(KEY3_GPIO_PORT, &GPIO_InitStructure);
+    	HAL_GPIO_Init(KEY4_GPIO_PORT, &GPIO_InitStructure);
+    	HAL_GPIO_Init(KEY5_GPIO_PORT, &GPIO_InitStructure);
     }
 
 同为GPIO的初始化函数，初始化的流程与“LED
@@ -139,7 +137,7 @@ GPIO初始化函数”章节中的类似，主要区别是引脚的模式。函�
 
 (1) 使用GPIO_InitTypeDef定义GPIO初始化结构体变量，以便下面用于存储GPIO配置。
 
-(2) 用宏定义函数KEY1_GPIO_CLK_ENABLE()，KEY2_GPIO_CLK_ENABLE()来使能按键的GPIO端口时钟。
+(2) 用宏定义函数KEY1_GPIO_CLK_ENABLE()，KEY2_GPIO_CLK_ENABLE()等来使能按键的GPIO端口时钟。
 
 (3) 向GPIO初始化结构体赋值，把引脚初始化成浮空输入模式，其中的Pin使用宏“KEYx_PIN”来赋值，
     使函数的实现方便移植。由于引脚的默认电平受按键电路影响，所以设置成“浮空/上拉/下拉”模式均没有区别。
@@ -192,44 +190,43 @@ HAL库提供了库函数HAL_GPIO_ReadPin来获取位状态，该函数输入GPIO
    :name: 代码清单13_4
 
     int main(void)
-
     {
-
-        /* 系统时钟初始化成168MHz */
-
-        SystemClock_Config();
-
-        /* LED 端口初始化 */
-
-        LED_GPIO_Config();
-
+      /* 系统时钟初始化成168 MHz */
+      SystemClock_Config();
+    	/* LED 端口初始化 */
+    	LED_GPIO_Config();	 
         /*初始化按键*/
-
-        Key_GPIO_Config();
-
-        /* 轮询按键状态，若按键按下则反转LED */
-
-        while (1) {
-
-            if ( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON ) {
-
-                /*LED1反转*/
-
-                LED1_TOGGLE;
-
-        }
-
-            if ( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON ) {
-
-                /*LED2反转*/
-
-                LED2_TOGGLE;
-
-            }
-
-        }
-
-        }
+      Key_GPIO_Config();
+    	/* 轮询按键状态，若按键按下则反转LED */ 
+    	while(1)                            
+    	{	   
+    		if( Key_Scan(KEY1_GPIO_PORT,KEY1_PIN) == KEY_ON  )
+    		{
+    			/*LEDALL反转*/
+    			LED_ALLTOGGLE;
+    		}   
+    		if( Key_Scan(KEY2_GPIO_PORT,KEY2_PIN) == KEY_ON  )
+    		{
+    			/*LED1反转*/
+    			LED1_TOGGLE;
+    		}
+    		if( Key_Scan(KEY3_GPIO_PORT,KEY3_PIN) == KEY_ON  )
+    		{
+    			/*LED2反转*/
+    			LED2_TOGGLE;
+    		}   
+    		if( Key_Scan(KEY4_GPIO_PORT,KEY4_PIN) == KEY_ON  )
+    		{
+    			/*LED3反转*/
+    			LED3_TOGGLE;
+    		}   
+    		if( Key_Scan(KEY5_GPIO_PORT,KEY5_PIN) == KEY_ON  )
+    		{
+    			/*LED4反转*/
+    			LED4_TOGGLE;
+    		}   
+    	}
+    }
 
 代码中初始化LED灯及按键后，在while函数里不断调用Key_Scan函数，并判断其返回值，若返回值表示按键按下，则反转LED灯的状态。
 

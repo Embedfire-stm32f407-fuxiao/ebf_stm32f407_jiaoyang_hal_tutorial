@@ -213,14 +213,14 @@ Send)，n表示低电平有效。如果使能CTS流控制，发送器在发送�
 
 SCLK：发送器时钟输出引脚。这个引脚仅适用于同步模式。
 
-USART引脚在STM32F407ZGT6芯片具体发布见 表20_3_。
+USART引脚在STM32F407IGT6芯片具体发布见 表20_3_。
 
 .. _表20_3:
 
 .. image:: media/image13.png
    :align: center
 
-STM32F407ZGT6有四个USART和两个UART，其中USART1和USART6的时钟来源于APB2总线时钟，其最大频率为84MHz，其他四个的时钟来源于APB1总线时钟，其最大频率为42MHz。
+STM32F407IGT6有四个USART和两个UART，其中USART1和USART6的时钟来源于APB2总线时钟，其最大频率为84MHz，其他四个的时钟来源于APB1总线时钟，其最大频率为42MHz。
 
 UART只是异步传输功能，所以没有SCLK、nCTS和nRTS功能引脚。
 观察 表20_3_ 可发现很多USART的功能引脚有多个引脚可选，这非常方便硬件设计，只要在程序编程时软件绑定引脚即可。
@@ -475,33 +475,24 @@ GPIO和USART宏定义
 
      /*******************************************************/
 
-     #define DEBUG_USART USART1
-
-     #define DEBUG_USART_CLK_ENABLE() __USART1_CLK_ENABLE();
-
-     #define RCC_PERIPHCLK_UARTx RCC_PERIPHCLK_USART1
-
-     #define RCC_UARTxCLKSOURCE_SYSCLK  RCC_USART1CLKSOURCE_SYSCLK
-
-     #define DEBUG_USART_RX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_RX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_RX_PIN GPIO_PIN_10
-
-     #define DEBUG_USART_RX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_TX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_TX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_TX_PIN GPIO_PIN_9
-
-     #define DEBUG_USART_TX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_IRQHandler USART1_IRQHandler
-
-     #define DEBUG_USART_IRQ USART1_IRQn
+    #define DEBUG_USART                             USART1
+    #define DEBUG_USART_CLK_ENABLE()                __USART1_CLK_ENABLE();
+    
+    #define RCC_PERIPHCLK_UARTx                     RCC_PERIPHCLK_USART1
+    #define RCC_UARTxCLKSOURCE_SYSCLK               RCC_USART1CLKSOURCE_SYSCLK
+    
+    #define DEBUG_USART_RX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_RX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_RX_PIN                      GPIO_PIN_7
+    #define DEBUG_USART_RX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_TX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_TX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_TX_PIN                      GPIO_PIN_6
+    #define DEBUG_USART_TX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_IRQHandler                  USART1_IRQHandler
+    #define DEBUG_USART_IRQ                 		USART1_IRQn
 
      /************************************************************/
 
@@ -606,9 +597,9 @@ __weak表示弱定义，表示如果你自己定义了同名的函数就不用�
 
         /* USART1 GPIO Configuration
 
-        PA9 ------> USART1_TX
+        PB6 ------> USART1_TX
 
-        PA10 ------> USART1_RX
+        PB7 ------> USART1_RX
 
         */
 
@@ -753,12 +744,12 @@ __HAL_UART_GET_FLAG函数用来获取中断事件标志。使用if语句来判�
 
 图 20‑10 实验现象
 
-USART1指令控制RGB彩灯实验
+USART1指令控制LED灯实验
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 在学习C语言时我们经常使用C语言标准函数库输入输出函数，比如printf、scanf、getchar等等。为让开发板也支持这些函数需要把USART发送和接收函数添加到这些函数的内部函数内。
 
-正如之前所讲，可以在串口调试助手输入指令，让开发板根据这些指令执行一些任务，现在我们编写程序让开发板接收USART数据，然后根据数据内容控制RGB彩灯的颜色。
+正如之前所讲，可以在串口调试助手输入指令，让开发板根据这些指令执行一些任务，现在我们编写程序让开发板接收USART数据，然后根据数据内容控制LED灯的亮灭。
 
 
 硬件设计
@@ -776,7 +767,7 @@ _usart.c和bsp _usart.h文件用来存放USART驱动程序及相关宏定义。
 编程要点
 ''''''''
 
-1) 初始化配置RGB彩色灯GPIO；
+1) 初始化配置LED灯GPIO；
 
 2) 使能RX和TX引脚GPIO时钟和USART时钟；
 
@@ -786,7 +777,7 @@ _usart.c和bsp _usart.h文件用来存放USART驱动程序及相关宏定义。
 
 5) 使能USART；
 
-6) 获取指令输入，根据指令控制RGB彩色灯。
+6) 获取指令输入，根据指令控制LED灯。
 
 代码分析
 ''''''''
@@ -806,33 +797,24 @@ GPIO和USART宏定义
 
      /*******************************************************/
 
-     #define DEBUG_USART USART1
-
-     #define DEBUG_USART_CLK_ENABLE() __USART1_CLK_ENABLE();
-
-     #define RCC_PERIPHCLK_UARTx RCC_PERIPHCLK_USART1
-
-     #define RCC_UARTxCLKSOURCE_SYSCLK  RCC_USART1CLKSOURCE_SYSCLK
-
-     #define DEBUG_USART_RX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_RX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_RX_PIN GPIO_PIN_10
-
-     #define DEBUG_USART_RX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_TX_GPIO_PORT GPIOA
-
-     #define DEBUG_USART_TX_GPIO_CLK_ENABLE() __GPIOA_CLK_ENABLE()
-
-     #define DEBUG_USART_TX_PIN GPIO_PIN_9
-
-     #define DEBUG_USART_TX_AF GPIO_AF7_USART1
-
-     #define DEBUG_USART_IRQHandler USART1_IRQHandler
-
-     #define DEBUG_USART_IRQ USART1_IRQn
+    #define DEBUG_USART                             USART1
+    #define DEBUG_USART_CLK_ENABLE()                __USART1_CLK_ENABLE();
+    
+    #define RCC_PERIPHCLK_UARTx                     RCC_PERIPHCLK_USART1
+    #define RCC_UARTxCLKSOURCE_SYSCLK               RCC_USART1CLKSOURCE_SYSCLK
+    
+    #define DEBUG_USART_RX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_RX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_RX_PIN                      GPIO_PIN_7
+    #define DEBUG_USART_RX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_TX_GPIO_PORT                GPIOB
+    #define DEBUG_USART_TX_GPIO_CLK_ENABLE()        __GPIOB_CLK_ENABLE()
+    #define DEBUG_USART_TX_PIN                      GPIO_PIN_6
+    #define DEBUG_USART_TX_AF                       GPIO_AF7_USART1
+    
+    #define DEBUG_USART_IRQHandler                  USART1_IRQHandler
+    #define DEBUG_USART_IRQ                 		USART1_IRQn
 
      /************************************************************/
 
@@ -861,9 +843,9 @@ USART初始化配置
 
         /**USART1 GPIO Configuration
 
-        PA9 ------> USART1_TX
+        PB6 ------> USART1_TX
 
-        PA10 ------> USART1_RX
+        PB7 ------> USART1_RX
 
         */
 
@@ -971,33 +953,15 @@ MicroLIB”勾选上，MicoroLIB是缺省C库的备选库，它对标准C库进�
    :name: 代码清单20_11
 
     static void Show_Message(void)
-
     {
-
-        printf("\r\n 这是一个通过串口通信指令控制RGB彩灯实验 \n");
-
-        printf("使用 USART 参数为：%d 8-N-1 \n",USART_BAUDRATE);
-
-        printf("开发板接到指令后控制RGB彩灯颜色，指令对应如下：\n");
-
-        printf(" 指令 ------ 彩灯颜色 \n");
-
-        printf(" 1 ------ 红 \n");
-
-        printf(" 2 ------ 绿 \n");
-
-        printf(" 3 ------ 蓝 \n");
-
-        printf(" 4 ------ 黄 \n");
-
-        printf(" 5 ------ 紫 \n");
-
-        printf(" 6 ------ 青 \n");
-
-        printf(" 7 ------ 白 \n");
-
-        printf(" 8 ------ 灭 \n");
-
+      printf("\r\n   这是一个通过串口通信指令控制LED灯实验 \n");
+      printf("开发板接到指令后控制LED灯亮，指令对应如下：\n");
+      printf("   指令   ------ 彩灯颜色 \n");
+      printf("     1    ------    LED1 \n");
+      printf("     2    ------    LED2 \n");
+      printf("     3    ------    LED3 \n");
+      printf("     4    ------    LED4 \n");
+      printf("     5    ------    所有LED \n");
     }
 
 Show_Message函数全部是调用printf函数，“打印”实验操作信息到串口调试助手。
@@ -1008,64 +972,58 @@ Show_Message函数全部是调用printf函数，“打印”实验操作信息�
 .. code-block:: c
    :caption: 代码清单 20‑12 主函数
    :name: 代码清单20_12
-
+    
     int main(void)
     {
-        char ch;
-        /* 配置系统时钟为168 MHz */
-        SystemClock_Config();
-
-        /* 初始化RGB彩灯 */
-        LED_GPIO_Config();
-
-        /* 初始化USART1 配置模式为 115200 8-N-1 */
-        UARTx_Config();
-
-        /* 打印指令输入提示信息 */
-        Show_Message();
-        while (1) {
+      char ch;   
+      
+      HAL_Init();        
+      /* 配置系统时钟为168 MHz */ 
+      SystemClock_Config();
+    	/* 初始化RGB彩灯 */ 
+      LED_GPIO_Config(); 
+      /*初始化USART 配置模式为 115200 8-N-1，中断接收*/
+      DEBUG_USART_Config();
+      
+    	/* 打印指令输入提示信息 */
+      Show_Message();
+    	
+      while(1)
+        {	
             /* 获取字符指令 */
             ch=getchar();
             printf("接收到字符：%c\n",ch);
-
+    				
             /* 根据字符指令控制RGB彩灯颜色 */
-            switch (ch) {
-            case '1':
-                LED_RED;
-                break;
-            case '2':
-                LED_GREEN;
-                break;
-            case '3':
-                LED_BLUE;
-                break;
-            case '4':
-                LED_YELLOW;
-                break;
-            case '5':
-                LED_PURPLE;
-                break;
-            case '6':
-                LED_CYAN;
-                break;
-            case '7':
-                LED_WHITE;
-                break;
-            case '8':
-                LED_RGBOFF;
-                break;
-            default:
+            switch(ch)
+            {
+              case '1':
+                LED1_TOGGLE;
+              break;
+              case '2':
+                LED2_TOGGLE;
+              break;
+              case '3':
+                LED3_TOGGLE;
+              break;
+              case '4':
+                LED4_TOGGLE;
+              break;
+              case '5':
+                LED_ALLTOGGLE;
+              break;
+              default:
                 /* 如果不是指定指令字符，打印提示信息 */
-                Show_Message();
-                break;
-            }
-        }
+              Show_Message();
+              break;      
+            }   
+        }	
     }
 
 首先我们定义一个字符变量来存放接收到的字符。
 
 接下来调用SystemClock_Config
-函数初始化系统时钟，调用LED_GPIO_Config函数完成RGB彩色GPIO初始化配置，该函数定义在bsp_led.c文件内。
+函数初始化系统时钟，调用LED_GPIO_Config函数完成LEDGPIO初始化配置，该函数定义在bsp_led.c文件内。
 
 调用USARTx_Config函完成USART初始化配置。
 
@@ -1080,4 +1038,4 @@ getchar函数用于等待获取一个字符，并返回字符。我们使用ch�
 
 保证开发板相关硬件连接正确，用USB线连接开发板“USB转串口”接口跟电脑，在电脑端打开串口调试助手，
 把编译好的程序下载到开发板，此时串口调试助手即可收到开发板发过来的数据。我们在串口调试助手发送区域输入一个特定字符，
-点击发送按钮，RGB彩色灯状态随之改变。
+点击发送按钮，LED灯状态随之改变。

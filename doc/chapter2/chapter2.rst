@@ -19,7 +19,7 @@
 获取KEIL5安装包
 ~~~~~~~~~~~~~~~
 
-要想获得KEIL5的安装包，在百度里面搜索“KEIL5下载”即可找到很多网友提供的下载文件，或者到KEIL的官网下载：\ https://www.keil.com/download/product/\ ，一大堆注册非常麻烦。我们这里面KEIL5的版本是MDK5.15，以后有新版本大家可使用更高版本。
+要想获得KEIL5的安装包，在百度里面搜索“KEIL5下载”即可找到很多网友提供的下载文件，或者到KEIL的官网下载：\ https://www.keil.com/download/product/\ ，一大堆注册非常麻烦。实验的工程均为KEIL5.30版本编写，我们这里面KEIL5的版本是以MDK5.15为例介绍，以后有新版本大家可使用更高版本。
 
 .. image:: media/image1.png
    :align: center

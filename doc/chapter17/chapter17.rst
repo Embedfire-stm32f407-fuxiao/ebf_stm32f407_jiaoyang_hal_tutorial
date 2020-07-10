@@ -158,12 +158,30 @@ EXTI0可以通过AFIO的外部中断配置寄存器1(AFIO_EXTICR1)的EXTI0[3:0]�
     #define KEY1_INT_GPIO_PIN                 GPIO_PIN_0
     #define KEY1_INT_EXTI_IRQ                 EXTI0_IRQn
     #define KEY1_IRQHandler                   EXTI0_IRQHandler
-
+    
     #define KEY2_INT_GPIO_PORT                GPIOC
     #define KEY2_INT_GPIO_CLK_ENABLE()        __GPIOA_CLK_ENABLE();
     #define KEY2_INT_GPIO_PIN                 GPIO_PIN_13
     #define KEY2_INT_EXTI_IRQ                 EXTI15_10_IRQn
     #define KEY2_IRQHandler                   EXTI15_10_IRQHandler
+    
+    #define KEY3_INT_GPIO_PORT                GPIOG
+    #define KEY3_INT_GPIO_CLK_ENABLE()        __GPIOG_CLK_ENABLE();
+    #define KEY3_INT_GPIO_PIN                 GPIO_PIN_2
+    #define KEY3_INT_EXTI_IRQ                 EXTI2_IRQn
+    #define KEY3_IRQHandler                   EXTI2_IRQHandler
+    
+    #define KEY4_INT_GPIO_PORT                GPIOG
+    #define KEY4_INT_GPIO_CLK_ENABLE()        __GPIOG_CLK_ENABLE();
+    #define KEY4_INT_GPIO_PIN                 GPIO_PIN_3
+    #define KEY4_INT_EXTI_IRQ                 EXTI3_IRQn
+    #define KEY4_IRQHandler                   EXTI3_IRQHandler
+    
+    #define KEY5_INT_GPIO_PORT                GPIOG
+    #define KEY5_INT_GPIO_CLK_ENABLE()        __GPIOG_CLK_ENABLE();
+    #define KEY5_INT_GPIO_PIN                 GPIO_PIN_4
+    #define KEY5_INT_EXTI_IRQ                 EXTI4_IRQn
+    #define KEY5_IRQHandler                   EXTI4_IRQHandler
     /*******************************************************/
 
 使用宏定义方法指定与电路设计相关配置，这对于程序移植或升级非常有用的。
@@ -177,33 +195,63 @@ EXTI中断配置
 
     void EXTI_Key_Config(void)
     {
-        GPIO_InitTypeDef GPIO_InitStructure;
-
+        GPIO_InitTypeDef GPIO_InitStructure; 
+    
         /*开启按键GPIO口的时钟*/
         KEY1_INT_GPIO_CLK_ENABLE();
         KEY2_INT_GPIO_CLK_ENABLE();
-
-        /* 选择按键1的引脚 */
+        KEY3_INT_GPIO_CLK_ENABLE();
+        KEY4_INT_GPIO_CLK_ENABLE();
+        KEY5_INT_GPIO_CLK_ENABLE();
+    
+        /* 选择按键1的引脚 */ 
         GPIO_InitStructure.Pin = KEY1_INT_GPIO_PIN;
-        /* 设置引脚为输入模式 */
-        GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
+        /* 设置引脚为输入模式 */ 
+        GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;	    		
         /* 设置引脚不上拉也不下拉 */
         GPIO_InitStructure.Pull = GPIO_NOPULL;
         /* 使用上面的结构体初始化按键 */
-        HAL_GPIO_Init(KEY1_INT_GPIO_PORT, &GPIO_InitStructure);
+        HAL_GPIO_Init(KEY1_INT_GPIO_PORT, &GPIO_InitStructure); 
         /* 配置 EXTI 中断源 到key1 引脚、配置中断优先级*/
         HAL_NVIC_SetPriority(KEY1_INT_EXTI_IRQ, 0, 0);
         /* 使能中断 */
         HAL_NVIC_EnableIRQ(KEY1_INT_EXTI_IRQ);
-
-        /* 选择按键2的引脚 */
-        GPIO_InitStructure.Pin = KEY2_INT_GPIO_PIN;
+    
+        /* 选择按键2的引脚 */ 
+        GPIO_InitStructure.Pin = KEY2_INT_GPIO_PIN;  
         /* 其他配置与上面相同 */
-        HAL_GPIO_Init(KEY2_INT_GPIO_PORT, &GPIO_InitStructure);
-        /* 配置 EXTI 中断源 到key1 引脚、配置中断优先级*/
+        HAL_GPIO_Init(KEY2_INT_GPIO_PORT, &GPIO_InitStructure);      
+        /* 配置 EXTI 中断源 到key2 引脚、配置中断优先级*/
         HAL_NVIC_SetPriority(KEY2_INT_EXTI_IRQ, 0, 0);
         /* 使能中断 */
         HAL_NVIC_EnableIRQ(KEY2_INT_EXTI_IRQ);
+    	
+        /* 选择按键3的引脚 */ 
+        GPIO_InitStructure.Pin = KEY3_INT_GPIO_PIN;  
+        /* 其他配置与上面相同 */
+        HAL_GPIO_Init(KEY3_INT_GPIO_PORT, &GPIO_InitStructure);      
+        /* 配置 EXTI 中断源 到key3 引脚、配置中断优先级*/
+        HAL_NVIC_SetPriority(KEY3_INT_EXTI_IRQ, 0, 0);
+        /* 使能中断 */
+        HAL_NVIC_EnableIRQ(KEY3_INT_EXTI_IRQ);
+    	
+        /* 选择按键4的引脚 */ 
+        GPIO_InitStructure.Pin = KEY4_INT_GPIO_PIN;  
+        /* 其他配置与上面相同 */
+        HAL_GPIO_Init(KEY4_INT_GPIO_PORT, &GPIO_InitStructure);      
+        /* 配置 EXTI 中断源 到key4 引脚、配置中断优先级*/
+        HAL_NVIC_SetPriority(KEY4_INT_EXTI_IRQ, 0, 0);
+        /* 使能中断 */
+        HAL_NVIC_EnableIRQ(KEY4_INT_EXTI_IRQ);
+    	
+        /* 选择按键5的引脚 */ 
+        GPIO_InitStructure.Pin = KEY5_INT_GPIO_PIN;  
+        /* 其他配置与上面相同 */
+        HAL_GPIO_Init(KEY5_INT_GPIO_PORT, &GPIO_InitStructure);      
+        /* 配置 EXTI 中断源 到key5 引脚、配置中断优先级*/
+        HAL_NVIC_SetPriority(KEY5_INT_EXTI_IRQ, 0, 0);
+        /* 使能中断 */
+        HAL_NVIC_EnableIRQ(KEY5_INT_EXTI_IRQ);
     }
 
 首先，使用GPIO_InitTypeDef结构体定义用于GPIO初始化配置的变量，关于这个结构体前面都已经做了详细的讲解。
@@ -227,24 +275,62 @@ EXTI中断服务函数
 
     void KEY1_IRQHandler(void)
     {
-        //确保是否产生了EXTI Line中断
-        if (__HAL_GPIO_EXTI_GET_IT(KEY1_INT_GPIO_PIN) != RESET) {
-            // LED1 取反
-            LED1_TOGGLE;
-            //清除中断标志位
-            __HAL_GPIO_EXTI_CLEAR_IT(KEY1_INT_GPIO_PIN);
-        }
+      //确保是否产生了EXTI Line中断
+    	if(__HAL_GPIO_EXTI_GET_IT(KEY1_INT_GPIO_PIN) != RESET) 
+    	{
+    		// LED1 取反		
+    		LED_ALLTOGGLE;
+        //清除中断标志位
+    		__HAL_GPIO_EXTI_CLEAR_IT(KEY1_INT_GPIO_PIN);     
+    	}  
     }
-
+    
     void KEY2_IRQHandler(void)
     {
-        //确保是否产生了EXTI Line中断
-        if (__HAL_GPIO_EXTI_GET_IT(KEY2_INT_GPIO_PIN) != RESET) {
-            // LED2 取反
-            LED2_TOGGLE;
-            //清除中断标志位
-            __HAL_GPIO_EXTI_CLEAR_IT(KEY2_INT_GPIO_PIN);
-        }
+      //确保是否产生了EXTI Line中断
+    	if(__HAL_GPIO_EXTI_GET_IT(KEY2_INT_GPIO_PIN) != RESET) 
+    	{
+    		// LED2 取反		
+    		LED1_TOGGLE;
+        //清除中断标志位
+    		__HAL_GPIO_EXTI_CLEAR_IT(KEY2_INT_GPIO_PIN);     
+    	}  
+    }
+    
+    void KEY3_IRQHandler(void)
+    {
+      //确保是否产生了EXTI Line中断
+    	if(__HAL_GPIO_EXTI_GET_IT(KEY3_INT_GPIO_PIN) != RESET) 
+    	{
+    		// LED2 取反		
+    		LED2_TOGGLE;
+        //清除中断标志位
+    		__HAL_GPIO_EXTI_CLEAR_IT(KEY3_INT_GPIO_PIN);     
+    	}  
+    }
+    
+    void KEY4_IRQHandler(void)
+    {
+      //确保是否产生了EXTI Line中断
+    	if(__HAL_GPIO_EXTI_GET_IT(KEY4_INT_GPIO_PIN) != RESET) 
+    	{
+    		// LED2 取反		
+    		LED3_TOGGLE;
+        //清除中断标志位
+    		__HAL_GPIO_EXTI_CLEAR_IT(KEY4_INT_GPIO_PIN);     
+    	}  
+    }
+    
+    void KEY5_IRQHandler(void)
+    {
+      //确保是否产生了EXTI Line中断
+    	if(__HAL_GPIO_EXTI_GET_IT(KEY5_INT_GPIO_PIN) != RESET) 
+    	{
+    		// LED2 取反		
+    		LED4_TOGGLE;
+        //清除中断标志位
+    		__HAL_GPIO_EXTI_CLEAR_IT(KEY5_INT_GPIO_PIN);     
+    	}  
     }
 
 当中断发生时，对应的中断服务函数就会被执行，我们可以在中断服务函数实现一些控制。
@@ -288,6 +374,6 @@ LED_GPIO_Config函数定义在bsp_led.c文件内，完成RGB彩灯的GPIO初始�
 下载验证
 ^^^^^^^^
 
-保证开发板相关硬件连接正确，把编译好的程序下载到开发板。此时RGB彩色灯是暗的，如果我们按下开发板上的按键1，
-RGB彩灯变亮，再按下按键1，RGB彩灯又变暗；如果我们按下开发板上的按键2并弹开，RGB彩灯变亮，
-再按下开发板上的KEY2并弹开，RGB彩灯又变暗。
+保证开发板相关硬件连接正确，把编译好的程序下载到开发板。此时LED灯是暗的，如果我们按下开发板上的按键1，
+LED灯变亮，再按下按键1，LED灯又变暗；如果我们按下开发板上的按键2并弹开，LED灯变亮，
+再按下开发板上的KEY2并弹开，LED灯又变暗。
