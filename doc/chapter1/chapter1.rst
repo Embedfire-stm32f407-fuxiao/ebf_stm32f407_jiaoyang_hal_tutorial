@@ -27,7 +27,7 @@
 本书配套的硬件平台为：野火STM32-F407骄阳开发板，具体见 图1_1_。学习的时候如果配套该硬件平台做实验，
 学习必会达到事半功倍的效果，可以省去中间移植时遇到的各种问题。
 
-.. image:: media/image1.png
+.. image:: media/image1.jpg
    :align: center
    :alt: 图1_1
    :name: 图1_1
