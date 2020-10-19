@@ -147,65 +147,65 @@ ESR 的入口地址，
 .. image:: media/image4.png
    :align: center
 
-.. code-block::
+.. code-block:: guess
    :caption: 代码 14‑1 向量表
    :name: 代码清单14_1
 
-     __Vectors DCD __initial_sp ;栈顶地址
+    __Vectors DCD __initial_sp ;栈顶地址
 
-               DCD Reset_Handler ;复位程序地址
+            DCD Reset_Handler ;复位程序地址
 
-               DCD NMI_Handler
+            DCD NMI_Handler
 
-               DCD HardFault_Handler
+            DCD HardFault_Handler
 
-               DCD MemManage_Handler
+            DCD MemManage_Handler
 
-               DCD BusFault_Handler
+            DCD BusFault_Handler
 
-               DCD UsageFault_Handler
+            DCD UsageFault_Handler
 
-               DCD 0 ; 0 表示保留
+            DCD 0 ; 0 表示保留
 
-               DCD 0
+            DCD 0
 
-              DCD 0
+            DCD 0
 
-              DCD 0
+            DCD 0
 
-              DCD SVC_Handler
+            DCD SVC_Handler
 
-              DCD DebugMon_Handler
+            DCD DebugMon_Handler
 
-              DCD 0
+            DCD 0
 
-              DCD PendSV_Handler
+            DCD PendSV_Handler
 
-              DCD SysTick_Handler
+            DCD SysTick_Handler
 
-    
 
-    
 
-              ;外部中断开始
 
-              DCD WWDG_IRQHandler
 
-              DCD PVD_IRQHandler
+            ;外部中断开始
 
-              DCD TAMPER_IRQHandler
+            DCD WWDG_IRQHandler
 
-    
+            DCD PVD_IRQHandler
 
-              ;限于篇幅，中间代码省略
+            DCD TAMPER_IRQHandler
 
-              DCD DMA2_Channel2_IRQHandler
 
-              DCD DMA2_Channel3_IRQHandler
 
-              DCD DMA2_Channel4_5_IRQHandler
+            ;限于篇幅，中间代码省略
 
-              __Vectors_End __Vectors_Size EQU __Vectors_End - __Vectors
+            DCD DMA2_Channel2_IRQHandler
+
+            DCD DMA2_Channel3_IRQHandler
+
+            DCD DMA2_Channel4_5_IRQHandler
+
+            __Vectors_End __Vectors_Size EQU __Vectors_End - __Vectors
 
 __Vectors为向量表起始地址，__Vectors_End
 为向量表结束地址，两个相减即可算出向量表大小。
@@ -286,7 +286,9 @@ BX       跳转到由寄存器/标号给出的地址，不用返回
 
 如果我们在使用某个外设的时候，开启了某个中断，但是又忘记编写配套的中断服务程序或者函数名写错，那当中断来临的时，程序就会跳转到启动文件预先写好的空的中断服务程序中，并且在这个空函数中无线循环，即程序就死在这里。
 
-.. code-block::
+.. highlight:: sh
+
+::
 
      NMI_Handler PROC ;系统异常
 
@@ -336,7 +338,9 @@ BX       跳转到由寄存器/标号给出的地址，不用返回
 
 ALIGN：对指令或者数据存放的地址进行对齐，后面会跟一个立即数。缺省表示4字节对齐。
 
-.. code-block::
+.. highlight:: sh
+
+::
 
     ;用户栈和堆初始化,由C库函数_main来完成
 

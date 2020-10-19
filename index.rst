@@ -59,8 +59,6 @@
    doc/chapter38/chapter38
    doc/chapter39/chapter39
    doc/chapter44/chapter44
-   doc/ov2640/ov2640
-   doc/ov5640/ov5640
    doc/chapter40/chapter40
    doc/chapter41/chapter41
    doc/chapter42/chapter42
@@ -71,15 +69,6 @@
    :maxdepth: 1
    :caption: 附录
    :numbered:
-
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: 投稿精选
-   :titlesonly:
-
-   submission/rst-testfile
 
 
 .. toctree::

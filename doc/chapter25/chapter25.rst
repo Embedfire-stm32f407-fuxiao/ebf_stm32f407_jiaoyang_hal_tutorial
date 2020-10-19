@@ -309,7 +309,7 @@ Flash芯片，当SPI Flash芯片处于睡眠模式时需要唤醒芯片才可以
 读取扇区
 ============
 
-.. code-block::
+.. code-block:: guess
    :caption: 代码清单 25‑4 扇区读取
    :name: 代码清单25_4
 
@@ -354,7 +354,7 @@ long类型，UINT类型实际是 unsigned int类型，类型定义在integer.h�
 扇区写入
 ==========
 
-.. code-block::
+.. code-block:: guess
    :caption: 代码清单 25‑5 扇区写入
    :name: 代码清单25_5
 

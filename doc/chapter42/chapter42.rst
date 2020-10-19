@@ -147,7 +147,7 @@ PSIZE(1:0)配置  11b                    10b       01b       00b
 打开map文件后，查看文件最后部分的区域，可以看到一段以“Memory Map of the
 image”开头的记录(若找不到可用查找功能定位)，见 代码清单44_1_。
 
-.. code-block:: c
+.. code-block:: guess
    :caption: 代码清单 44‑1 map文件中的存储映像分布说明
    :name: 代码清单44_1
 
@@ -263,7 +263,7 @@ FLASH解锁、上锁函数
 
 解锁后擦除扇区时可调用FLASH_EraseSector完成，见 代码清单44_3_。
 
-.. code-block:: c
+.. code-block:: guess
    :caption: 代码清单 44‑3 擦除扇区
    :name: 代码清单44_3
 

@@ -381,11 +381,8 @@ HAL库中同名函数的读者，会发现HAL库中的函数内容多了一些�
    :name: 代码清单12_7
 
     void assert_failed(uint8_t* file, uint32_t line)
-
     {
-
-        printf(“/r/n 输入参数错误，错误文件名=%s,行号=%s”,file,line);
-
+        printf("/r/n 输入参数错误，错误文件名=%s,行号=%s",file,line);
     }
 
 注意在我们的这个LED工程中，还不支持printf函数(在USART外设章节会讲解)，想测试assert_failed输出的读者，

@@ -158,7 +158,7 @@ HAL库提供了一些库函数，它们封装了修改选项字节时操作寄�
       return HAL_OK;
    }
 
-解锁的时候，它对FLASH_OPTCR寄存器写入两个解锁参数，上锁的时候，对FLASH_ OPTCR寄存器的FLASH_OPTCR_OPTLOCK位置1。
+解锁的时候，它对FLASH_OPTCR寄存器写入两个解锁参数，上锁的时候，对FLASH_OPTCR寄存器的FLASH_OPTCR_OPTLOCK位置1。
 
 设置选项字节函数
 ^^^^^^^^^^^^^^^^^^
