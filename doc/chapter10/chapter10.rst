@@ -14,7 +14,9 @@ STM32Cube 是一个全面的软件平台，包括了ST产品的每个系列。(�
 
 Java下载地址：\ `www.java.com/zh_CN/ <https://www.java.com/zh_CN/>`__
 
-STM32CubeMX下载地址：ST官网搜索STM32CubeMX
+STM32CubeMX下载地址：ST官网搜索STM32CubeMX，或直接点击链接（可能会失效）：
+\ `ST CubeMX <https://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html>`__
+
 
 安装Java软件
 
@@ -40,7 +42,7 @@ STM32CubeMX下载地址：ST官网搜索STM32CubeMX
 安装STM32CubeMX软件
 **********************
 
-双击安装包“SetupSTM32CubeMX-5.3.0.exe”，具体操作步骤如下：
+双击安装包“SetupSTM32CubeMX-5.3.0.exe”，图中为老版本CubeMX但安装步骤一致不影响学习，具体操作步骤如下：
 
 .. image:: media/image4.png
    :align: center
